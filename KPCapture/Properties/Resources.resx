@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MSG_INVALID_NUMBER_FORMAT" xml:space="preserve">
+    <value>Please check that input size is a number</value>
+  </data>
+  <data name="TEXT_DETAIL_BUTTON" xml:space="preserve">
+    <value>Detail</value>
+  </data>
+  <data name="TEXT_FILTER_BUTTON" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="STATE_USING" xml:space="preserve">
+    <value>Using</value>
+  </data>
+  <data name="TEXT_RUN_BUTTON" xml:space="preserve">
+    <value>Run</value>
+  </data>
+  <data name="DEFAULT_PROCESS_STATEMENT" xml:space="preserve">
+    <value>State : </value>
+  </data>
+  <data name="PACKET_MAGIC_SIGNATURE" xml:space="preserve">
+    <value>cshyeon</value>
+  </data>
+  <data name="MSG_FILTER_ALREADY_EXISTS" xml:space="preserve">
+    <value>The same filter already exists.</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="KPCapture" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\KPCapture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DEFAULT_PROCESS_USEFILTER" xml:space="preserve">
+    <value>Use filter : </value>
+  </data>
+  <data name="DEFAULT_PROCESS_NAME" xml:space="preserve">
+    <value>Process Name(pid)</value>
+  </data>
+  <data name="ERROR" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="TEXT_STATE_BUTTON" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="INFINITE" xml:space="preserve">
+    <value>INFINITE</value>
+  </data>
+  <data name="MSG_CANNOT_SET_FILTER_DURING_RUNNING" xml:space="preserve">
+    <value>Cannot set filter during capturing packet.
+Please pause capture and try again.</value>
+  </data>
+  <data name="USED" xml:space="preserve">
+    <value>Used</value>
+  </data>
+  <data name="DEFAULT_PROCESS_TRANSMISSION" xml:space="preserve">
+    <value>Transmission : </value>
+  </data>
+  <data name="STATE_RUNNING" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="MSG_NOT_ENOUGH_FILTER_INFORMATION" xml:space="preserve">
+    <value>You must enter one or more filters.
+None filter has not been entered.</value>
+  </data>
+  <data name="TEXT_PAUSE_BUTTON" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="FORMAT_PROCESS_TRANSMISSION" xml:space="preserve">
+    <value>Transmission : {0} / {1}</value>
+  </data>
+  <data name="STATE_PAUSE" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="MSG_OCCURRED_DURING_ADD_CHANNEL" xml:space="preserve">
+    <value>The problem occurred while adding a channel.
+Please try again.</value>
+  </data>
+  <data name="FORMAT_PROCESS_STATE" xml:space="preserve">
+    <value>State : {0}</value>
+  </data>
+  <data name="FORMAT_PROCESS_USEFILTER" xml:space="preserve">
+    <value>Use filter : {0}</value>
+  </data>
+  <data name="TEXT_DELETE_BUTTON" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="PACKET_ENDMARK" xml:space="preserve">
+    <value>end</value>
+  </data>
+  <data name="UNUSED" xml:space="preserve">
+    <value>Unused</value>
+  </data>
+  <data name="MSG_INVALID_HEXSTR_FORMAT" xml:space="preserve">
+    <value>Please check the hexadecimal format
+Example) 01 AA B1 DC 10 DD</value>
+  </data>
+  <data name="STATE_UNUSING" xml:space="preserve">
+    <value>Unusing</value>
+  </data>
+  <data name="MSG_NO_TRANSMISSION_HISTORY" xml:space="preserve">
+    <value>No data transmission</value>
+  </data>
+  <data name="MSG_INVALID_IP_FORMAT" xml:space="preserve">
+    <value>Please check the value of IP and port.
+
+Example) 192.168.0.1:9998</value>
+  </data>
+  <data name="DetailIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DetailIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DECRYPT_DESCRIPTION" xml:space="preserve">
+    <value>Select your python script for decryption.
+Function 'decrypt' in your python script file will decrypt data.
+Follow the prototype : 
+
+def decrypt(bytes):
+    do...
+    return newBytes</value>
+  </data>
+  <data name="NOT_FOUND_SCRIPT" xml:space="preserve">
+    <value>Could not find file : {0}
+Please check your python script path again.</value>
+  </data>
+  <data name="SYNTAX_ERROR" xml:space="preserve">
+    <value>Syntax error
+
+Line : {0} Column : {1}
+Error code : {2}</value>
+  </data>
+  <data name="NOT_FOUND_DECRYPT_ROUTINE" xml:space="preserve">
+    <value>Could not find 'decrypt' function in your python script.
+Please check 'decrypt' function is exist again.</value>
+  </data>
+  <data name="DECRYPT_APPLIED_DESCRIPTION" xml:space="preserve">
+    <value>The decrypt script is applied.
+Script name : {0}</value>
+  </data>
+  <data name="DECRYPT_APPLY_SUCCESSFUL" xml:space="preserve">
+    <value>Decryption script has been successfully applied.</value>
+  </data>
+  <data name="DECRYPT_CLEAR_SUCCESSFUL" xml:space="preserve">
+    <value>The decryption script has been cleared.</value>
+  </data>
+  <data name="NOTIFICATION" xml:space="preserve">
+    <value>Notification</value>
+  </data>
+  <data name="python" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rsz_python3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+</root>

@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KPCapture", "KPCapture\KPCapture.csproj", "{776A0A3B-E572-4F62-A176-6C41E218CDC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KPCapture", "KPCapture.csproj", "{DD1E8818-BB60-46C5-90DC-FB42DB5D6BC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +13,19 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{776A0A3B-E572-4F62-A176-6C41E218CDC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{776A0A3B-E572-4F62-A176-6C41E218CDC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{776A0A3B-E572-4F62-A176-6C41E218CDC3}.Debug|x64.ActiveCfg = Debug|x64
-		{776A0A3B-E572-4F62-A176-6C41E218CDC3}.Debug|x64.Build.0 = Debug|x64
-		{776A0A3B-E572-4F62-A176-6C41E218CDC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{776A0A3B-E572-4F62-A176-6C41E218CDC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{776A0A3B-E572-4F62-A176-6C41E218CDC3}.Release|x64.ActiveCfg = Release|x64
-		{776A0A3B-E572-4F62-A176-6C41E218CDC3}.Release|x64.Build.0 = Release|x64
+		{DD1E8818-BB60-46C5-90DC-FB42DB5D6BC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD1E8818-BB60-46C5-90DC-FB42DB5D6BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD1E8818-BB60-46C5-90DC-FB42DB5D6BC4}.Debug|x64.ActiveCfg = Debug|x64
+		{DD1E8818-BB60-46C5-90DC-FB42DB5D6BC4}.Debug|x64.Build.0 = Debug|x64
+		{DD1E8818-BB60-46C5-90DC-FB42DB5D6BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD1E8818-BB60-46C5-90DC-FB42DB5D6BC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD1E8818-BB60-46C5-90DC-FB42DB5D6BC4}.Release|x64.ActiveCfg = Release|x64
+		{DD1E8818-BB60-46C5-90DC-FB42DB5D6BC4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {8CF90A5C-9546-472A-8096-EEAB656D35B1}
+		SolutionGuid = {E6642DBD-4031-4805-954D-3D1754C7E1E5}
 	EndGlobalSection
 EndGlobal

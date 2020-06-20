@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace KPU.Sources
 {
@@ -18,6 +17,7 @@ namespace KPU.Sources
 
         public byte[] Bytes
         {
+
             get
             {
                 if (this._bytes == null)

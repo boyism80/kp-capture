@@ -82,7 +82,7 @@ namespace KPU.Sources
         public MIB_UDP6ROW_OWNER_PID[] table;
     }
 
-    public class UDPTableEx
+    public static class UDPTable
     {
         [DllImport("iphlpapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern uint GetExtendedUdpTable(IntPtr pUdpTable, ref int pdwSize, bool bOrder, int ulAf, UdpTableClass tableClass, uint reserved = 0);
@@ -100,19 +100,19 @@ namespace KPU.Sources
             return GetUDPConnections<MIB_UDP6ROW_OWNER_PID, MIB_UDP6TABLE_OWNER_PID>(AF_INET6);
         }
 
-        public static uint[] FindProcessId(NetworkPacket packet)
+        public static uint[] FindProcessId(Packet packet)
         {
             var list = new List<uint>();
             if (packet.IPHeader.Version == "IP v4")
             {
-                var rows = UDPTableEx.GetAllUDPConnections().Where(row => ((row.LocalAddress.Equals(IPAddress.Parse("0.0.0.0")) || row.LocalAddress.Equals(packet.SourceAddress))      && row.LocalPort == packet.SourcePort) ||
+                var rows = UDPTable.GetAllUDPConnections().Where(row => ((row.LocalAddress.Equals(IPAddress.Parse("0.0.0.0")) || row.LocalAddress.Equals(packet.SourceAddress))      && row.LocalPort == packet.SourcePort) ||
                                                                           ((row.LocalAddress.Equals(IPAddress.Parse("0.0.0.0")) || row.LocalAddress.Equals(packet.DestinationAddress)) && row.LocalPort == packet.DestinationPort));
                 foreach (var row in rows)
                     list.Add(row.ProcessId);
             }
             else
             {
-                var rows = UDPTableEx.GetAllUDPv6Connections().Where(row => (row.LocalAddress.Equals(packet.SourceAddress) && row.LocalPort == packet.SourcePort) ||
+                var rows = UDPTable.GetAllUDPv6Connections().Where(row => (row.LocalAddress.Equals(packet.SourceAddress) && row.LocalPort == packet.SourcePort) ||
                                                                             (row.LocalAddress.Equals(packet.DestinationAddress) && row.LocalPort == packet.DestinationPort));
                 foreach (var row in rows)
                     list.Add(row.ProcessId);
@@ -123,7 +123,7 @@ namespace KPU.Sources
 
         public static bool FindProcessUDPAddress(int pid, out IPAddress address, out int port)
         {
-            foreach (var row in UDPTableEx.GetAllUDPConnections())
+            foreach (var row in UDPTable.GetAllUDPConnections())
             {
                 if (row.ProcessId != pid)
                     continue;
@@ -133,7 +133,7 @@ namespace KPU.Sources
                 return true;
             }
 
-            foreach (var row in UDPTableEx.GetAllUDPv6Connections())
+            foreach (var row in UDPTable.GetAllUDPv6Connections())
             {
                 if (row.ProcessId != pid)
                     continue;

@@ -23,7 +23,7 @@ namespace KPU.Forms
 
         // This variable is the base instance of network raw packet sniffing.
         // Main form adds this variable and adds itself to the listener to receive the captured packets in the 'OnReceive' method.
-        private NetworkPacketReceiver       _network_packet_receiver;
+        private Watcher       _network_packet_receiver;
 
         // This variable is a thread variable used to smoothly add captured packets to the UI.
         // It solves the problem of constantly and quickly adding data to the channel_packet_viewer, a DataGridView type.
@@ -63,16 +63,16 @@ namespace KPU.Forms
                 if (value)
                 {
                     if (this._network_packet_receiver != null)
-                        this._network_packet_receiver.close();
+                        this._network_packet_receiver.Close();
 
-                    this._network_packet_receiver = new NetworkPacketReceiver(this.host_list.Text, this);
+                    this._network_packet_receiver = new Watcher(this.host_list.Text, this);
                     this.host_list.Enabled = false;
                     this.button_fix_host.Text = "STOP CAPTURE";
                 }
                 else
                 {
                     if (this._network_packet_receiver != null)
-                        this._network_packet_receiver.close();
+                        this._network_packet_receiver.Close();
 
                     this._network_packet_receiver = null;
                     this.host_list.Enabled = true;
@@ -133,7 +133,7 @@ namespace KPU.Forms
         }
 
         #region invoke methods
-        private void append_network_packet_ui(NetworkPacket packet)
+        private void append_network_packet_ui(Packet packet)
         {
             this.channel_packet_viewer.Invoke(new MethodInvoker(delegate () 
                                                                 {
@@ -196,7 +196,7 @@ namespace KPU.Forms
         #endregion
 
         #region Callback method of thread routine
-        private bool clear_invalid_rows(Channel channel, List<NetworkPacket> network_packetse)
+        private bool clear_invalid_rows(Channel channel, List<Packet> network_packetse)
         {
             var invalid_view_rows = new List<DataGridViewRow>();
             foreach (DataGridViewRow row in this.channel_packet_viewer.Rows)
@@ -204,7 +204,7 @@ namespace KPU.Forms
                 if (this._suspend_flag == true)
                     return false;
 
-                var alive_packets = row.Tag as NetworkPacket;
+                var alive_packets = row.Tag as Packet;
                 if (network_packetse.Where(p => p == alive_packets).Count() == 0)
                     invalid_view_rows.Add(row);
             }
@@ -228,9 +228,9 @@ namespace KPU.Forms
             return true;
         }
 
-        private bool append_new_packets(Channel channel, List<NetworkPacket> network_packets)
+        private bool append_new_packets(Channel channel, List<Packet> network_packets)
         {
-            var not_appended_packets = new List<NetworkPacket>();
+            var not_appended_packets = new List<Packet>();
             foreach (var network_packet in network_packets)
             {
                 if (this._suspend_flag == true)
@@ -239,7 +239,7 @@ namespace KPU.Forms
                 var exist = false;
                 foreach (DataGridViewRow row in this.channel_packet_viewer.Rows)
                 {
-                    var appended_packet = row.Tag as NetworkPacket;
+                    var appended_packet = row.Tag as Packet;
 
                     if (appended_packet != network_packet)
                         continue;
@@ -437,7 +437,7 @@ namespace KPU.Forms
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
             if (this._network_packet_receiver != null)
-                this._network_packet_receiver.close();
+                this._network_packet_receiver.Close();
 
             if (this._detect_exit_thread != null && this._detect_exit_thread.IsAlive)
                 this._exit_detect_flag = true;
@@ -464,7 +464,7 @@ namespace KPU.Forms
 
         private void showDetailToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var packet                  = this.packetContextMenu.Tag as NetworkPacket;
+            var packet                  = this.packetContextMenu.Tag as Packet;
             var dialog                  = new PacketViewForm(packet);
             dialog.ShowDialog(this);
         }
@@ -475,7 +475,7 @@ namespace KPU.Forms
             if (selectedIndex < 0)
                 return;
 
-            var packet                  = this.channel_packet_viewer.Rows[selectedIndex].Tag as NetworkPacket;
+            var packet                  = this.channel_packet_viewer.Rows[selectedIndex].Tag as Packet;
             var dialog                  = new PacketViewForm(packet);
             dialog.ShowDialog(this);
         }
@@ -560,7 +560,7 @@ namespace KPU.Forms
             if (this.channel_packet_viewer.SelectedRows.Count == 0)
                 return;
 
-            var selection               = this.channel_packet_viewer.SelectedRows[0].Tag as NetworkPacket;
+            var selection               = this.channel_packet_viewer.SelectedRows[0].Tag as Packet;
             if (selection == null)
                 return;
 
@@ -591,11 +591,11 @@ namespace KPU.Forms
                 MetroMessageBox.Show(this, "Success to apply capture host : " + this.host_list.Text, "Success!!");
         }
 
-        public void OnReceive(NetworkPacket network_packet)
+        public void OnReceive(Packet network_packet)
         {
             if (network_packet.Protocol == Protocol.TCP)
             {
-                foreach (var pid in TCPTableEx.FindProcessId(network_packet))
+                foreach (var pid in TCPTable.FindProcessId(network_packet))
                 {
                     if (this.ChannelPool.Contains((int)pid) == false)
                         continue;
@@ -611,7 +611,7 @@ namespace KPU.Forms
             }
             else
             {
-                foreach (var pid in UDPTableEx.FindProcessId(network_packet))
+                foreach (var pid in UDPTable.FindProcessId(network_packet))
                 {
                     if (this.ChannelPool.Contains((int)pid) == false)
                         continue;

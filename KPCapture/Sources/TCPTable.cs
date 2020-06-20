@@ -166,7 +166,7 @@ namespace KPU.Sources
 
     
 
-    public class TCPTableEx
+    public static class TCPTable
     {
         [DllImport("iphlpapi.dll", SetLastError = true)]
         static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int dwOutBufLen, bool sort, int ipVersion, TCP_TABLE_CLASS tblClass, uint reserved = 0);
@@ -185,19 +185,19 @@ namespace KPU.Sources
             return GetTCPConnections<MIB_TCP6ROW_OWNER_PID, MIB_TCP6TABLE_OWNER_PID>(AF_INET6);
         }
 
-        public static uint[] FindProcessId(NetworkPacket packet)
+        public static uint[] FindProcessId(Packet packet)
         {
             var list = new List<uint>();
             if (packet.IPHeader.Version == "IP v4")
             {
-                var rows = TCPTableEx.GetAllTCPConnections().Where(row => (row.LocalAddress.Equals(packet.SourceAddress)      && row.LocalPort == packet.SourcePort) ||
+                var rows = TCPTable.GetAllTCPConnections().Where(row => (row.LocalAddress.Equals(packet.SourceAddress)      && row.LocalPort == packet.SourcePort) ||
                                                                           (row.LocalAddress.Equals(packet.DestinationAddress) && row.LocalPort == packet.DestinationPort));
                 foreach (var row in rows)
                     list.Add(row.ProcessId);
             }
             else if (packet.IPHeader.Version == "IP v6")
             {
-                var rows = TCPTableEx.GetAllTCPv6Connections().Where(row => (row.LocalAddress.Equals(packet.SourceAddress)      && row.LocalPort == packet.SourcePort) ||
+                var rows = TCPTable.GetAllTCPv6Connections().Where(row => (row.LocalAddress.Equals(packet.SourceAddress)      && row.LocalPort == packet.SourcePort) ||
                                                                             (row.LocalAddress.Equals(packet.DestinationAddress) && row.LocalPort == packet.DestinationPort));
                 foreach (var row in rows)
                         list.Add(row.ProcessId);
@@ -208,7 +208,7 @@ namespace KPU.Sources
             return list.ToArray();
         }
 
-        public static PacketAction GetPacketAction(Channel channel, NetworkPacket packet)
+        public static PacketAction GetPacketAction(Channel channel, Packet packet)
         {
             if (packet.IPHeader.Version == "IP v4")
             {

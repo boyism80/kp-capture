@@ -5,7 +5,7 @@ namespace KPU.Forms
 {
     public partial class PacketViewForm : MetroForm
     {
-        public PacketViewForm(NetworkPacket packet)
+        public PacketViewForm(Packet packet)
         {
             InitializeComponent();
             var headerIP = packet.IPHeader;

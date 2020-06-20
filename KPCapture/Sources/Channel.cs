@@ -19,8 +19,8 @@ namespace KPU.Sources
         }
 
         // This variable is a list of packet data captured by the channel.
-        private List<NetworkPacket>     _network_packets = new List<NetworkPacket>();
-        public NetworkPacket[] NetworkPackets
+        private List<Packet>     _network_packets = new List<Packet>();
+        public Packet[] NetworkPackets
         {
             get
             {
@@ -29,7 +29,7 @@ namespace KPU.Sources
         }
 
         // This variable is a packet data list filtered by the filter of the packets captured by the channel.
-        public NetworkPacket[] FilteredNetworkPacket
+        public Packet[] FilteredNetworkPacket
         {
             get
             {
@@ -117,7 +117,7 @@ namespace KPU.Sources
             this.Process                = p;
         }
 
-        public bool add_packet(NetworkPacket packet)
+        public bool add_packet(Packet packet)
         {
             if (this.Running == false)
                 return false;
@@ -148,7 +148,7 @@ namespace KPU.Sources
             this._filters.Remove(filter);
         }
 
-        public bool acceptable(NetworkPacket network_packet)
+        public bool acceptable(Packet network_packet)
         {
             if (this.Filters.Length == 0)
             {
@@ -191,7 +191,7 @@ namespace KPU.Sources
             }
         }
 
-        public byte[] decrypted_bytes(NetworkPacket network_packet)
+        public byte[] decrypted_bytes(Packet network_packet)
         {
             if (this._scope == null)
             {

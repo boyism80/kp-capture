@@ -1,21 +1,17 @@
 ﻿using KPU.Sources;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KPU_Packet_Capturer.Sources
 {
     public interface IReceiveEvent
     {
-        void OnReceive(NetworkPacket network_packet);
+        void OnReceive(Packet network_packet);
         void OnError(string message);
     }
 
-    public class NetworkPacketReceiver
+    public class Watcher
     {
         // This variable is the size of the buffer used to get packet data.
         private static int          BUFFER_SIZE = 8192;
@@ -37,7 +33,7 @@ namespace KPU_Packet_Capturer.Sources
         // This value indicates whether the listener is ready to pass packet data to the registered object.
         public bool Notificatable { get { return this._listener != null && this.Running == true; } }
 
-        public NetworkPacketReceiver(string host, IReceiveEvent listener)
+        public Watcher(string host, IReceiveEvent listener)
         {
             this._listener = listener;
 
@@ -51,27 +47,27 @@ namespace KPU_Packet_Capturer.Sources
             this._socket.BeginReceive(this._bytes, 0, this._bytes.Length, SocketFlags.None, new AsyncCallback(this.OnReceive), null);
         }
 
-        ~NetworkPacketReceiver()
+        ~Watcher()
         {
-            this.close();
+            this.Close();
         }
 
-        private NetworkPacket parse(byte[] bytes, int size)
+        private Packet Parse(byte[] bytes, int size)
         {
-            var network_packet = new NetworkPacket(bytes, size);
-            if (network_packet.IPHeader.Version == "Unknown")
+            var packet = new Packet(bytes, size);
+            if (packet.IPHeader.Version == "Unknown")
                 throw new Exception("Unknwon ip header version");
 
-            return network_packet;
+            return packet;
         }
 
         private void OnReceive(IAsyncResult asyncResult)
         {
             try
             {
-                var network_packet = this.parse(this._bytes, this._socket.EndReceive(asyncResult));
+                var packet = this.Parse(this._bytes, this._socket.EndReceive(asyncResult));
                 if(this.Notificatable)
-                    this._listener.OnReceive(network_packet);
+                    this._listener?.OnReceive(packet);
             }
             catch (ObjectDisposedException e)
             {
@@ -80,7 +76,7 @@ namespace KPU_Packet_Capturer.Sources
             catch (Exception e)
             {
                 if (this.Notificatable)
-                    this._listener.OnError(e.Message);
+                    this._listener?.OnError(e.Message);
             }
 
             try
@@ -92,7 +88,7 @@ namespace KPU_Packet_Capturer.Sources
             { }
         }
 
-        public void close()
+        public void Close()
         {
             if (this._socket != null)
                 this._socket.Close();

@@ -59,7 +59,7 @@ namespace KPU.Sources
             return false;
         }
 
-        public bool condition(NetworkPacket packet)
+        public bool condition(Packet packet)
         {
             if (this.OnlyAcceptAllicationLevel && packet.BaseHeader.Length == 0)
                 return false;

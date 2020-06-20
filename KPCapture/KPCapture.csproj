@@ -145,12 +145,12 @@
     <Compile Include="Sources\DLLInjector.cs" />
     <Compile Include="Sources\Filter.cs" />
     <Compile Include="Sources\IPHeader.cs" />
-    <Compile Include="Sources\NetworkPacketReceiver.cs" />
+    <Compile Include="Sources\Watcher.cs" />
     <Compile Include="Sources\Packet.cs" />
     <Compile Include="Sources\TCPHeader.cs" />
-    <Compile Include="Sources\TCPTableEx.cs" />
+    <Compile Include="Sources\TCPTable.cs" />
     <Compile Include="Sources\UDPHeader.cs" />
-    <Compile Include="Sources\UDPTableEx.cs" />
+    <Compile Include="Sources\UDPTable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

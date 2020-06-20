@@ -3,7 +3,7 @@ using System.Net;
 
 namespace KPU.Sources
 {
-    public class NetworkPacket
+    public class Packet
     {
         public IPHeader IPHeader { get; private set; }
 
@@ -67,7 +67,7 @@ namespace KPU.Sources
 
         public DateTime Timestamp { get; private set; }
 
-        public NetworkPacket(byte[] bytes, int recvsize)
+        public Packet(byte[] bytes, int recvsize)
         {
             this.Timestamp              = DateTime.Now;
             this.IPHeader               = new IPHeader(bytes, recvsize);

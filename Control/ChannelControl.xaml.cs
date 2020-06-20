@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KPCapture.Model;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace KPCapture.Control
 {
@@ -20,9 +10,16 @@ namespace KPCapture.Control
     /// </summary>
     public partial class ChannelControl : UserControl
     {
+        public Action<Channel.ViewModel> Remove { get; set; }
+
         public ChannelControl()
         {
             InitializeComponent();
+        }
+
+        private void OnRemove(object sender, RoutedEventArgs e)
+        {
+            Remove?.Invoke(this.DataContext as Channel.ViewModel);
         }
     }
 }

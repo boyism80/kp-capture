@@ -129,6 +129,9 @@
       <DependentUpon>ChannelContainer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Control\Container\ItemSourceControl.cs" />
+    <Compile Include="Control\IconButton.xaml.cs">
+      <DependentUpon>IconButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialog\ChannelViewDialog.xaml.cs">
       <DependentUpon>ChannelViewDialog.xaml</DependentUpon>
     </Compile>
@@ -153,6 +156,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Control\IconButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialog\ChannelViewDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -169,6 +176,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Style\Color.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Protocol\Base.cs" />
@@ -201,7 +212,18 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Image\play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\filter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\remove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\pause.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Fody.6.1.1\build\Fody.targets" Condition="Exists('packages\Fody.6.1.1\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

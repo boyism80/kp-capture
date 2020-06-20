@@ -1,11 +1,12 @@
-﻿using KPCapture.Model.Protocol;
+﻿using KPCapture.Command;
+using KPCapture.Model.Protocol;
 using KPCapture.ViewModel;
 using Microsoft.Scripting.Utils;
 using System;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
@@ -18,7 +19,6 @@ namespace KPCapture.Model
             [DllImport("gdi32.dll", SetLastError = true)]
             private static extern bool DeleteObject(IntPtr hObject);
 
-
             public Channel Data { get; private set; }
 
             public ObservableCollection<Packet.ViewModel> Packets { get; private set; } = new ObservableCollection<Packet.ViewModel>();
@@ -27,10 +27,18 @@ namespace KPCapture.Model
 
             public BitmapSource Icon { get; private set; }
 
+            public ICommand RunCommand { get; private set; }
+
+            public string RunIcon
+            {
+                get => this.Data.Packets.Enabled ? "/Image/play.png" : "/Image/pause.png";
+            }
+
             public ViewModel(Channel channel)
             {
                 this.Data = channel;
                 this.Packets.CollectionChanged += this.Packets_CollectionChanged;
+                this.RunCommand = new RelayCommand(this.OnRun);
 
                 try
                 {
@@ -52,6 +60,12 @@ namespace KPCapture.Model
                 {
                     this.Icon = null;
                 }
+            }
+
+            private void OnRun(object obj)
+            {
+                this.Data.Packets.Enabled = !this.Data.Packets.Enabled;
+                this.OnPropertyChanged(nameof(this.RunIcon));
             }
 
             private void Packets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

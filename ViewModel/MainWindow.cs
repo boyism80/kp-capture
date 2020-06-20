@@ -38,6 +38,7 @@ namespace KPCapture
 
             public ICommand AddChannelCommand { get; private set; }
             public ICommand CaptureCommand { get; private set; }
+            public ICommand ChannelRemoved { get; private set; }
 
             public ViewModel(MainWindow Owner)
             {
@@ -46,6 +47,13 @@ namespace KPCapture
 
                 this.AddChannelCommand = new RelayCommand(this.OnAddChannel);
                 this.CaptureCommand = new RelayCommand(this.OnCapture);
+                this.ChannelRemoved = new RelayCommand(this.OnChannelRemoved);
+            }
+
+            private void OnChannelRemoved(object obj)
+            {
+                var vm = obj as Channel.ViewModel;
+                this.Channels.Remove(vm);
             }
 
             private void OnCapture(object obj)

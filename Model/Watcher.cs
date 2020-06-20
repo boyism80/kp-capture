@@ -66,9 +66,6 @@ namespace KPCapture.Model
 
         private void OnReceive(IAsyncResult ar)
         {
-            if (this._socket == null)
-                return;
-
             try
             {
                 var size = this._socket.EndReceive(ar);
@@ -85,7 +82,7 @@ namespace KPCapture.Model
             }
 
             Array.Clear(this._bytes, 0, this._bytes.Length);
-            this._socket.BeginReceive(this._bytes, 0, this._bytes.Length, SocketFlags.None, new AsyncCallback(this.OnReceive), null);
+            this._socket?.BeginReceive(this._bytes, 0, this._bytes.Length, SocketFlags.None, new AsyncCallback(this.OnReceive), null);
         }
 
         public void Dispose()

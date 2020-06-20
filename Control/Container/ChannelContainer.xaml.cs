@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using KPCapture.Model;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace KPCapture.Control.Container
 {
@@ -8,6 +10,13 @@ namespace KPCapture.Control.Container
     /// </summary>
     public partial class ChannelContainer : ItemsSourceControl
     {
+        public static readonly DependencyProperty RemoveProperty = DependencyProperty.Register("Remove", typeof(ICommand), typeof(ChannelContainer));
+        public ICommand Remove
+        {
+            get { return GetValue(RemoveProperty) as ICommand; }
+            set { SetValue(RemoveProperty, value); }
+        }
+
         public ChannelContainer()
         {
             InitializeComponent();
@@ -23,7 +32,13 @@ namespace KPCapture.Control.Container
             return new ChannelControl
             {
                 DataContext = context,
+                Remove = this.OnRemove
             };
+        }
+
+        private void OnRemove(Channel.ViewModel obj)
+        {
+            this.Remove?.Execute(obj);
         }
     }
 }

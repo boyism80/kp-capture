@@ -34,7 +34,8 @@
                         </StackPanel>
                         <container:ChannelContainer
                             Grid.Row="0"
-                            ItemsSource="{Binding Channels}"/>
+                            ItemsSource="{Binding Channels}"
+                            Remove="{Binding ChannelRemoved}"/>
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="Detail">

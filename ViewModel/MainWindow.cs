@@ -7,7 +7,6 @@ using KPCapture.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Windows.Input;
@@ -20,6 +19,7 @@ namespace KPCapture
         {
             private MainWindow _owner;
             private Watcher _watcher;
+            private ChannelViewDialog _channelViewDialog;
 
             public ObservableCollection<Channel.ViewModel> Channels { get; private set; } = new ObservableCollection<Channel.ViewModel>();
 
@@ -34,7 +34,10 @@ namespace KPCapture
                 } 
             }
 
-            public ICommand AddChannelCommand { get; set; }
+            public string StateText { get => this._watcher.Running ? "중단" : "캡처"; }
+
+            public ICommand AddChannelCommand { get; private set; }
+            public ICommand CaptureCommand { get; private set; }
 
             public ViewModel(MainWindow Owner)
             {
@@ -42,15 +45,42 @@ namespace KPCapture
                 this._watcher = new Watcher(this);
 
                 this.AddChannelCommand = new RelayCommand(this.OnAddChannel);
+                this.CaptureCommand = new RelayCommand(this.OnCapture);
+            }
+
+            private void OnCapture(object obj)
+            {
+                if (this._watcher.Running)
+                    this._watcher.Stop();
+                else
+                    this._watcher.Start(this._owner.HostEntryBox.SelectedItem as string);
+
+                this.OnPropertyChanged(nameof(this.StateText));
             }
 
             private void OnAddChannel(object obj)
             {
-                var dialog = new ChannelViewDialog(this.Channels.Select(x => x.Data))
+                if (this._channelViewDialog != null)
+                    return;
+
+                this._channelViewDialog = new ChannelViewDialog(this.Channels.Select(x => x.Data))
                 {
                     Owner = this._owner,
                 };
-                dialog.Show();
+                this._channelViewDialog.Closed += this._channelViewDialog_Closed;
+                this._channelViewDialog.Complete += this._channelViewDialog_Complete;
+                this._channelViewDialog.Show();
+            }
+
+            private void _channelViewDialog_Complete(object sender, EventArgs e)
+            {
+                if(this._channelViewDialog.Selected != null)
+                    this.Channels.Add(this._channelViewDialog.Selected);
+            }
+
+            private void _channelViewDialog_Closed(object sender, EventArgs e)
+            {
+                this._channelViewDialog = null;
             }
 
             public void OnError(string message)

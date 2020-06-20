@@ -7,6 +7,26 @@
         mc:Ignorable="d"
         Title="ChannelViewDialog" Height="450" Width="800">
     <Grid>
-        <control:ChannelListView ItemsSource="{Binding Channels}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <control:ChannelListView x:Name="ChannelListView"
+                                 ItemsSource="{Binding Channels}"
+                                 Grid.Row="0"/>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    Margin="0 10">
+            <Button Content="확인" 
+                    Padding="10 2"
+                    Margin="0 0 10 0"
+                    Click="OnComplete"/>
+            <Button Content="취소"
+                    Padding="10 2"
+                    Margin="0 0 10 0"
+                    Click="OnCancel"/>
+        </StackPanel>
     </Grid>
 </Window>

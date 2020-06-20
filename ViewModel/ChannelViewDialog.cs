@@ -1,9 +1,11 @@
-﻿using KPCapture.Model;
+﻿using KPCapture.Command;
+using KPCapture.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
 
 namespace KPCapture.Dialog
 {
@@ -12,7 +14,7 @@ namespace KPCapture.Dialog
         public class ViewModel
         {
             public ObservableCollection<Channel.ViewModel> Channels { get; private set; } = new ObservableCollection<Channel.ViewModel>();
-
+            
             public ViewModel(IEnumerable<Channel> attachedList)
             {
                 foreach (var vm in Process.GetProcesses()

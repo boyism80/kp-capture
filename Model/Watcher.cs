@@ -47,6 +47,7 @@ namespace KPCapture.Model
 
             this._socket.IOControl(IOControlCode.ReceiveAll, new byte[4] { 1, 0, 0, 0 }, new byte[4] { 1, 0, 0, 0 });
             this._socket.BeginReceive(this._bytes, 0, this._bytes.Length, SocketFlags.None, new AsyncCallback(this.OnReceive), null);
+            this.Running = true;
             return true;
         }
 
@@ -59,11 +60,15 @@ namespace KPCapture.Model
             this._socket = null;
 
             this.Host = string.Empty;
+            this.Running = false;
             return true;
         }
 
         private void OnReceive(IAsyncResult ar)
         {
+            if (this._socket == null)
+                return;
+
             try
             {
                 var size = this._socket.EndReceive(ar);

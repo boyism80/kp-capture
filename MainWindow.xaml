@@ -189,13 +189,14 @@
                     </Grid>
                 </Border>
             </Grid>
-            
+
             <TabControl x:Name="MainTab"
                         Background="{StaticResource BackgroundBrush}">
                 <TabItem Header="Home">
-                    <StackPanel Orientation="Vertical">
+                    <DockPanel LastChildFill="True"
+                               Margin="0 15">
                         <StackPanel Orientation="Horizontal"
-                                    DockPanel.Dock="Bottom"
+                                    DockPanel.Dock="Top"
                                     HorizontalAlignment="Right"
                                     Margin="0 0 0 15">
                             <ComboBox x:Name="HostEntryBox"
@@ -210,86 +211,105 @@
                                     Command="{Binding CaptureCommand}"/>
                         </StackPanel>
                         <container:ChannelContainer
-                            Grid.Row="0"
                             ItemsSource="{Binding Channels}"
                             Remove="{Binding ChannelRemoved}"
                             Detail="{Binding ChannelDetail}"/>
-                    </StackPanel>
+                    </DockPanel>
                 </TabItem>
                 <TabItem Header="Detail">
-                    <DockPanel LastChildFill="True"
-                               Margin="0 0 0 20">
-                        <Border DockPanel.Dock="Top"
-                                Padding="0 5 0 10">
-                            <DockPanel>
-                                <Border Padding="12"
-                                        Margin="0 0 10 0">
-                                    <Image Source="{Binding Selected.Icon}"
-                                       Width="32"
-                                       Height="32"/>
-                                </Border>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{Binding Selected.Name, FallbackValue=Channel Name}" />
-                                    <TextBlock 
-                                        Text="{Binding Selected.Packets.Count, StringFormat={}Transmission : {0}, FallbackValue='Transmission : 369'}" />
-                                    <StackPanel Orientation="Horizontal"
-                                                HorizontalAlignment="Right">
+                    <Grid>
+                        <DockPanel LastChildFill="True"
+                                   Margin="0 0 0 20"
+                                   Visibility="{c:Binding IsSelected, FalseToVisibility=Collapsed}">
+                            <Border DockPanel.Dock="Top"
+                                    Padding="0 5 0 10">
+                                <DockPanel>
+                                    <Border Padding="12"
+                                            Margin="0 0 10 0">
+                                        <Image Source="{Binding SelectedChannel.Icon}"
+                                           Width="32"
+                                           Height="32"/>
+                                    </Border>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{Binding SelectedChannel.Name, FallbackValue=Channel Name}"
+                                                   FontWeight="Bold"
+                                                   FontSize="{StaticResource FontSizeRegularEx}"
+                                                   Margin="0 0 0 5"/>
+                                        <TextBlock 
+                                            Text="{Binding SelectedChannel.Packets.Count, StringFormat={}Transmission : {0}, FallbackValue='Transmission : 369'}" />
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Right">
+                                        </StackPanel>
                                     </StackPanel>
-                                </StackPanel>
-                            </DockPanel>
-                        </Border>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="6*" />
-                                <ColumnDefinition Width="4*" />
-                            </Grid.ColumnDefinitions>
-                            <DataGrid x:Name="PacketsGridView"
-                                      Grid.Column="0"
-                                      ItemsSource="{Binding Selected.Packets}"
-                                      Margin="0 0 5 0"
-                                      SelectionChanged="PacketsGridView_SelectionChanged">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="INDEX" Binding="{Binding Index}" />
-                                    <DataGridTextColumn Header="SOURCE" Binding="{Binding Source}" />
-                                    <DataGridTextColumn Header="DESTINATION" Binding="{Binding Destination}" />
-                                    <DataGridTextColumn Header="DATA" Width="*" Binding="{Binding HexBytes}" />
-                                    <DataGridTextColumn Header="SIZE" Binding="{Binding Bytes.Length}"/>
-                                    <DataGridTextColumn Header="PROTOCOL" Binding="{Binding Protocol}" />
-                                    <DataGridTextColumn Header="TIMESTAMP" Binding="{Binding TimeStamp}"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                            <Grid Grid.Column="1"
-                                  Margin="5 0 0 0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Border Grid.Row="0"
-                                        Margin="0 0 0 5"
-                                        BorderThickness="1"
-                                        BorderBrush="{StaticResource BorderBrush}">
-                                    <WindowsFormsHost>
-                                        <forms:HexBox x:Name="RawHexBox"
-                                                      StringViewVisible="True"
-                                                      BackColor="{StaticResource RawBackground}"
-                                                      BorderStyle="None"
-                                                      LineInfoVisible="True"/>
-                                    </WindowsFormsHost>
-                                </Border>
-                                <Border Grid.Row="1"
-                                        BorderThickness="1"
-                                        BorderBrush="{StaticResource BorderBrush}">
-                                    <WindowsFormsHost>
-                                        <forms:HexBox x:Name="DecHexBox"
-                                                      StringViewVisible="True"
-                                                      BackColor="{StaticResource RawBackground}"
-                                                      BorderStyle="None"
-                                                      LineInfoVisible="True"/>
-                                    </WindowsFormsHost>
-                                </Border>
+                                </DockPanel>
+                            </Border>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="6*" />
+                                    <ColumnDefinition Width="4*" />
+                                </Grid.ColumnDefinitions>
+                                <DataGrid x:Name="PacketsGridView"
+                                          IsReadOnly="True"
+                                          Grid.Column="0"
+                                          ItemsSource="{Binding SelectedChannel.Packets}"
+                                          Margin="0 0 5 0"
+                                          SelectionChanged="PacketsGridView_SelectionChanged"
+                                          MouseDoubleClick="PacketsGridView_MouseDoubleClick">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="INDEX" Binding="{Binding Index}" />
+                                        <DataGridTextColumn Header="SOURCE" Binding="{Binding Source}" />
+                                        <DataGridTextColumn Header="DESTINATION" Binding="{Binding Destination}" />
+                                        <DataGridTextColumn Header="DATA" Width="*" Binding="{Binding HexBytes}" />
+                                        <DataGridTextColumn Header="SIZE" Binding="{Binding Bytes.Length}"/>
+                                        <DataGridTextColumn Header="PROTOCOL" Binding="{Binding Protocol}" />
+                                        <DataGridTextColumn Header="TIMESTAMP" Binding="{Binding TimeStamp}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <Grid Grid.Column="1"
+                                      Margin="5 0 0 0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Border Grid.Row="0"
+                                            Margin="0 0 0 5"
+                                            BorderThickness="1"
+                                            BorderBrush="{StaticResource BorderBrush}">
+                                        <WindowsFormsHost>
+                                            <forms:HexBox x:Name="RawHexBox"
+                                                          StringViewVisible="True"
+                                                          BackColor="{StaticResource RawBackground}"
+                                                          BorderStyle="None"
+                                                          LineInfoVisible="True"/>
+                                        </WindowsFormsHost>
+                                    </Border>
+                                    <Border Grid.Row="1"
+                                            BorderThickness="1"
+                                            BorderBrush="{StaticResource BorderBrush}">
+                                        <WindowsFormsHost>
+                                            <forms:HexBox x:Name="DecHexBox"
+                                                          StringViewVisible="True"
+                                                          BackColor="{StaticResource RawBackground}"
+                                                          BorderStyle="None"
+                                                          LineInfoVisible="True"/>
+                                        </WindowsFormsHost>
+                                    </Border>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </DockPanel>
+                        </DockPanel>
+                        <StackPanel Orientation="Vertical"
+                                    Visibility="{c:Binding '!IsSelected', FalseToVisibility=Collapsed}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="You are not select any channel."
+                                       FontSize="32"
+                                       FontWeight="Bold"
+                                       TextAlignment="Center"/>
+                            <TextBlock Text="Please select a channel for more information first."
+                                       FontSize="14"
+                                       TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
                 </TabItem>
             </TabControl>
         </DockPanel>

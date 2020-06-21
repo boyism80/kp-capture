@@ -4,6 +4,7 @@ using KPCapture.Model;
 using KPCapture.Model.Protocol;
 using KPCapture.Module;
 using KPCapture.ViewModel;
+using Microsoft.Scripting.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +23,8 @@ namespace KPCapture
             private ChannelViewDialog _channelViewDialog;
 
             public ObservableCollection<Channel.ViewModel> Channels { get; private set; } = new ObservableCollection<Channel.ViewModel>();
-            public Channel.ViewModel Selected { get; private set; }
+            public Channel.ViewModel SelectedChannel { get; private set; }
+            public bool IsSelected { get => this.SelectedChannel != null; }
 
             public List<string> HostEntries 
             {
@@ -63,7 +65,7 @@ namespace KPCapture
             private void OnChannelDetail(object obj)
             {
                 var vm = obj as Channel.ViewModel;
-                this.Selected = vm;
+                this.SelectedChannel = vm;
 
                 this._owner.MainTab.SelectedIndex = 1;
             }
@@ -72,6 +74,9 @@ namespace KPCapture
             {
                 var vm = obj as Channel.ViewModel;
                 this.Channels.Remove(vm);
+
+                if (this.SelectedChannel == vm)
+                    this.SelectedChannel = null;
             }
 
             private void OnCapture(object obj)
@@ -101,8 +106,8 @@ namespace KPCapture
 
             private void _channelViewDialog_Complete(object sender, EventArgs e)
             {
-                if(this._channelViewDialog.Selected != null)
-                    this.Channels.Add(this._channelViewDialog.Selected);
+                foreach (var vm in this._channelViewDialog.Selected)
+                    this.Channels.Add(vm);
             }
 
             private void _channelViewDialog_Closed(object sender, EventArgs e)

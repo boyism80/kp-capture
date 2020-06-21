@@ -1,6 +1,8 @@
 ﻿using KPCapture.Model;
+using Microsoft.Scripting.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace KPCapture.Dialog
@@ -12,7 +14,7 @@ namespace KPCapture.Dialog
     {
         public ViewModel vm { get; private set; }
 
-        public Channel.ViewModel Selected { get; private set; }
+        public List<Channel.ViewModel> Selected { get; private set; } = new List<Channel.ViewModel>();
 
         public event EventHandler Complete;
 
@@ -26,14 +28,23 @@ namespace KPCapture.Dialog
 
         private void OnComplete(object sender, RoutedEventArgs e)
         {
-            this.Selected = this.ChannelListView.SelectedItem as Channel.ViewModel;
-            this.vm.Channels.Remove(this.Selected);
+            if (this.Selected.Count == 0)
+                return;
+
             this.Complete?.Invoke(this, EventArgs.Empty);
+
+            foreach (var x in this.Selected)
+                this.vm.Channels.Remove(x);
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void ChannelListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            this.Selected = this.ChannelListView.SelectedItems.Select(x => x as Channel.ViewModel).ToList();
         }
     }
 }

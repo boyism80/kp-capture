@@ -41,5 +41,10 @@ namespace KPCapture
                 this.DecHexBox.ByteProvider = null;
             }
         }
+
+        private void PacketsGridView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
+        }
     }
 }

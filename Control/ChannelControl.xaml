@@ -43,18 +43,18 @@
                         VerticalAlignment="Top">
                     <control:IconButton
                         Icon="{Binding RunIcon}"
-                        IconWidth="16"
+                        IconWidth="12"
                         Command="{Binding RunCommand}"/>
                     <control:IconButton
                         Icon="/Image/filter.png"
-                        IconWidth="16"/>
+                        IconWidth="12"/>
                     <control:IconButton
                         Icon="/Image/recycle bin.png"
                         Command="{Binding ClearCommand}"
-                        IconWidth="16"/>
+                        IconWidth="12"/>
                     <control:IconButton
                         Icon="/Image/remove.png"
-                        IconWidth="16"
+                        IconWidth="12"
                         Click="OnRemove"/>
                 </StackPanel>
             </Border>

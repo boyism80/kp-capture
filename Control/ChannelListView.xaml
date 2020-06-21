@@ -9,7 +9,8 @@
           AllowDrop="True"
           IsSynchronizedWithCurrentItem="False"
           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-          ScrollViewer.VerticalScrollBarVisibility="Auto">
+          ScrollViewer.VerticalScrollBarVisibility="Auto"
+          BorderThickness="0">
     <ListView.ItemsPanel>
         <ItemsPanelTemplate>
             <WrapPanel/>
@@ -24,7 +25,6 @@
                        HorizontalAlignment="Center"/>
                 <TextBlock Text="{Binding Name}"
                            TextTrimming="WordEllipsis"
-                           Foreground="Black"
                            TextAlignment="Center"
                            Padding="0 4 0 8"/>
             </StackPanel>

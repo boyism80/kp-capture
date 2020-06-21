@@ -5,27 +5,49 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:control="clr-namespace:KPCapture.Control"
         mc:Ignorable="d"
+        Foreground="{StaticResource MainTextBrush}"
+        Style="{StaticResource DefaultWindowStyle}"
         Title="ChannelViewDialog" Height="450" Width="800">
-    <Grid>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome 
+            ResizeBorderThickness="10"
+            CaptionHeight="30"
+            CornerRadius="0"
+            GlassFrameThickness="0"
+            />
+    </WindowChrome.WindowChrome>
+
+    <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0">
+            <Viewbox Stretch="None"
+                     DockPanel.Dock="Top"
+                     HorizontalAlignment="Right">
+                <TextBox Style="{StaticResource SearchTextBox}"
+                         Width="200"
+                         Margin="10"
+                         Text="{Binding FilterName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="프로세스 이름"/>
+            </Viewbox>
+            <control:ChannelListView x:Name="ChannelListView"
+                                     ItemsSource="{Binding FilteredChannels}"
+                                     Margin="5"
+                                     IsSynchronizedWithCurrentItem="True"
+                                     SelectionChanged="ChannelListView_SelectionChanged"/>
+        </DockPanel>
         
-        <control:ChannelListView x:Name="ChannelListView"
-                                 ItemsSource="{Binding Channels}"
-                                 Grid.Row="0"/>
+            
         <StackPanel Orientation="Horizontal"
                     Grid.Row="1"
                     HorizontalAlignment="Right"
                     Margin="0 10">
             <Button Content="확인" 
-                    Padding="10 2"
-                    Margin="0 0 10 0"
                     Click="OnComplete"/>
             <Button Content="취소"
-                    Padding="10 2"
-                    Margin="0 0 10 0"
                     Click="OnCancel"/>
         </StackPanel>
     </Grid>

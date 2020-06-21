@@ -8,9 +8,6 @@
         <ResourceDictionary Source="Color.xaml" />
         <ResourceDictionary Source="Font.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    <Style TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource MainTextBrush}" />
-    </Style>
 
     <Style TargetType="{x:Type Button}">
         <Setter Property="Background" Value="{StaticResource SystemBrush}"/>

@@ -26,11 +26,18 @@
             <Border Grid.Column="1"
                     Padding="0 0 0 20">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="{Binding Name, FallbackValue=Channel Name}"
+                    <TextBlock 
                        Foreground="White"
                        FontWeight="Bold"
                        FontSize="14"
-                       Padding="0 5"/>
+                       Padding="0 5">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0}({1})" FallbackValue="Name(ID)">
+                                <Binding Path="Name" />
+                                <Binding Path="Id" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
                     <TextBlock 
                         Text="{Binding Path=Packets.Count, StringFormat={}Transmission : {0}, FallbackValue='Transmission : 369'}" 
                         Foreground="White"/>

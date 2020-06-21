@@ -26,7 +26,14 @@
                 <TextBlock Text="{Binding Name}"
                            TextTrimming="WordEllipsis"
                            TextAlignment="Center"
-                           Padding="0 4 0 8"/>
+                           Padding="0 4 0 8">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}({1})">
+                            <Binding Path="Name" />
+                            <Binding Path="Id" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
         </DataTemplate>
     </ListView.ItemTemplate>

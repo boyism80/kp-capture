@@ -231,10 +231,16 @@
                                            Height="32"/>
                                     </Border>
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding SelectedChannel.Name, FallbackValue=Channel Name}"
-                                                   FontWeight="Bold"
+                                        <TextBlock FontWeight="Bold"
                                                    FontSize="{StaticResource FontSizeRegularEx}"
-                                                   Margin="0 0 0 5"/>
+                                                   Margin="0 0 0 5">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}({1})" FallbackValue="Name(ID)">
+                                                    <Binding Path="SelectedChannel.Name" />
+                                                    <Binding Path="SelectedChannel.Id" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
                                         <TextBlock 
                                             Text="{Binding SelectedChannel.Packets.Count, StringFormat={}Transmission : {0}, FallbackValue='Transmission : 369'}" />
                                         <StackPanel Orientation="Horizontal"

@@ -23,8 +23,8 @@ namespace KPCapture.Model
 
             public ObservableCollection<Packet.ViewModel> Packets { get; private set; } = new ObservableCollection<Packet.ViewModel>();
 
+            public int Id { get => this.Data.Id; }
             public string Name { get => this.Data.Name; }
-
             public BitmapSource Icon { get; private set; }
 
             public ICommand RunCommand { get; private set; }

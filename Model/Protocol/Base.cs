@@ -173,7 +173,7 @@ namespace KPCapture.Model.Protocol.Header
         public short CheckSum { get; private set; }
         public IPAddress SourceAddress { get; private set; }
         public IPAddress DestAddress { get; private set; }
-        public byte[] Bytes { get; private set; } = new byte[4096];
+        public byte[] Bytes { get; private set; }
 
         private byte _protocol;
         public Protocol ProtocolType
@@ -221,7 +221,8 @@ namespace KPCapture.Model.Protocol.Header
             this.HeaderSize >>= 4;
             this.HeaderSize *= 4;
 
-            Array.Copy(bytes, this.HeaderSize, this.Bytes, 0, this.TotalLength - this.HeaderSize);
+            this.Bytes = new byte[this.TotalLength - this.HeaderSize];
+            Array.Copy(bytes, this.HeaderSize, this.Bytes, 0, this.Bytes.Length);
         }
     }
 }

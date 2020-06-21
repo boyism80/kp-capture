@@ -11,6 +11,7 @@ namespace KPCapture.Control
     public partial class ChannelControl : UserControl
     {
         public Action<Channel.ViewModel> Remove { get; set; }
+        public Action<Channel.ViewModel> Detail { get; set; }
 
         public ChannelControl()
         {
@@ -19,7 +20,12 @@ namespace KPCapture.Control
 
         private void OnRemove(object sender, RoutedEventArgs e)
         {
-            Remove?.Invoke(this.DataContext as Channel.ViewModel);
+            this.Remove?.Invoke(this.DataContext as Channel.ViewModel);
+        }
+
+        private void OnDetail(object sender, RoutedEventArgs e)
+        {
+            this.Detail?.Invoke(this.DataContext as Channel.ViewModel);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace KPCapture
             private ChannelViewDialog _channelViewDialog;
 
             public ObservableCollection<Channel.ViewModel> Channels { get; private set; } = new ObservableCollection<Channel.ViewModel>();
+            public Channel.ViewModel Selected { get; private set; }
 
             public List<string> HostEntries 
             {
@@ -39,6 +40,7 @@ namespace KPCapture
             public ICommand AddChannelCommand { get; private set; }
             public ICommand CaptureCommand { get; private set; }
             public ICommand ChannelRemoved { get; private set; }
+            public ICommand ChannelDetail { get; private set; }
 
             public ViewModel(MainWindow Owner)
             {
@@ -48,6 +50,15 @@ namespace KPCapture
                 this.AddChannelCommand = new RelayCommand(this.OnAddChannel);
                 this.CaptureCommand = new RelayCommand(this.OnCapture);
                 this.ChannelRemoved = new RelayCommand(this.OnChannelRemoved);
+                this.ChannelDetail = new RelayCommand(this.OnChannelDetail);
+            }
+
+            private void OnChannelDetail(object obj)
+            {
+                var vm = obj as Channel.ViewModel;
+                this.Selected = vm;
+
+                this._owner.MainTab.SelectedIndex = 1;
             }
 
             private void OnChannelRemoved(object obj)
@@ -122,8 +133,11 @@ namespace KPCapture
                         return;
                 }
 
-                foreach (var channel in channels)
-                    channel.Packets.Add(new Packet.ViewModel(packet));
+                this._owner.Dispatcher.BeginInvoke(new Action(() => 
+                {
+                    foreach (var channel in channels)
+                        channel.Packets.Add(new Packet.ViewModel((uint)channel.Packets.Count + 1, packet));
+                }));
             }
         }
     }

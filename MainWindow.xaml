@@ -4,17 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:container="clr-namespace:KPCapture.Control.Container"
+        xmlns:container="clr-namespace:KPCapture.Control.Container" xmlns:forms="clr-namespace:Be.Windows.Forms;assembly=Be.Windows.Forms.HexBox"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Loaded="Window_Loaded">
     <Grid>
-        <!--<WindowsFormsHost>
-            <forms:HexBox x:Name="HexBox"></forms:HexBox>
-        </WindowsFormsHost>-->
-        <StackPanel Orientation="Vertical">
-            <TextBlock Text="KPCapture" />
-            <TabControl>
+        <DockPanel>
+            <TextBlock Text="KPCapture"
+                       DockPanel.Dock="Top"/>
+            <TabControl x:Name="MainTab">
                 <TabItem Header="Home">
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal"
@@ -35,12 +33,74 @@
                         <container:ChannelContainer
                             Grid.Row="0"
                             ItemsSource="{Binding Channels}"
-                            Remove="{Binding ChannelRemoved}"/>
+                            Remove="{Binding ChannelRemoved}"
+                            Detail="{Binding ChannelDetail}"/>
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="Detail">
+                    <DockPanel LastChildFill="True">
+                        <Border DockPanel.Dock="Top"
+                                Padding="0 5 0 10">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Padding="12"
+                                        Margin="0 0 10 0">
+                                    <Image Source="{Binding Selected.Icon}"
+                                       Width="32"
+                                       Height="32"/>
+                                </Border>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="{Binding Selected.Name, FallbackValue=Channel Name}" />
+                                    <TextBlock 
+                                        Text="{Binding Selected.Packets.Count, StringFormat={}Transmission : {0}, FallbackValue='Transmission : 369'}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="6*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="4*" />
+                            </Grid.ColumnDefinitions>
+                            <DataGrid x:Name="PacketsGridView"
+                                      Grid.Column="0"
+                                      ItemsSource="{Binding Selected.Packets}"
+                                      AutoGenerateColumns="False"
+                                      SelectionChanged="PacketsGridView_SelectionChanged">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="INDEX" Binding="{Binding Index}" />
+                                    <DataGridTextColumn Header="SOURCE" Binding="{Binding Source}" />
+                                    <DataGridTextColumn Header="DESTINATION" Binding="{Binding Destination}" />
+                                    <DataGridTextColumn Header="DATA" Width="*" Binding="{Binding HexBytes}" />
+                                    <DataGridTextColumn Header="SIZE" Binding="{Binding Bytes.Length}"/>
+                                    <DataGridTextColumn Header="PROTOCOL" Binding="{Binding Protocol}" />
+                                    <DataGridTextColumn Header="TIMESTAMP" Binding="{Binding TimeStamp}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <GridSplitter Grid.Column="1"
+                                          ShowsPreview="True"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Stretch"
+                                          Width="3"/>
+                            <Grid Grid.Column="2" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <WindowsFormsHost Grid.Row="0">
+                                    <forms:HexBox x:Name="RawHexBox"
+                                                  StringViewVisible="True"
+                                                  LineInfoVisible="True"/>
+                                </WindowsFormsHost>
+                                <WindowsFormsHost Grid.Row="1">
+                                    <forms:HexBox x:Name="DecHexBox"
+                                                  StringViewVisible="True"
+                                                  LineInfoVisible="True"/>
+                                </WindowsFormsHost>
+                            </Grid>
+                        </Grid>
+                    </DockPanel>
                 </TabItem>
             </TabControl>
-        </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>

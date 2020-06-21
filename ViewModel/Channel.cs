@@ -28,6 +28,7 @@ namespace KPCapture.Model
             public BitmapSource Icon { get; private set; }
 
             public ICommand RunCommand { get; private set; }
+            public ICommand ClearCommand { get; private set; }
 
             public string RunIcon
             {
@@ -39,6 +40,7 @@ namespace KPCapture.Model
                 this.Data = channel;
                 this.Packets.CollectionChanged += this.Packets_CollectionChanged;
                 this.RunCommand = new RelayCommand(this.OnRun);
+                this.ClearCommand = new RelayCommand(this.Clear);
 
                 try
                 {
@@ -60,6 +62,11 @@ namespace KPCapture.Model
                 {
                     this.Icon = null;
                 }
+            }
+
+            private void Clear(object obj)
+            {
+                this.Packets.Clear();
             }
 
             private void OnRun(object obj)

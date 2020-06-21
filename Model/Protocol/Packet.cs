@@ -22,6 +22,8 @@ namespace KPCapture.Model.Protocol
 
         public Header.Protocol Protocol { get => IP.ProtocolType; }
 
+        public DateTime DateTime { get; private set; } = DateTime.Now;
+
         private Packet(Header.Base b, Header.IP i)
         {
             this.Base = b;

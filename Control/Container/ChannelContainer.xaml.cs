@@ -1,4 +1,5 @@
 ﻿using KPCapture.Model;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,6 +18,13 @@ namespace KPCapture.Control.Container
             set { SetValue(RemoveProperty, value); }
         }
 
+        public static readonly DependencyProperty DetailProperty = DependencyProperty.Register("Detail", typeof(ICommand), typeof(ChannelContainer));
+        public ICommand Detail
+        {
+            get { return GetValue(DetailProperty) as ICommand; }
+            set { SetValue(DetailProperty, value); }
+        }
+
         public ChannelContainer()
         {
             InitializeComponent();
@@ -32,8 +40,14 @@ namespace KPCapture.Control.Container
             return new ChannelControl
             {
                 DataContext = context,
-                Remove = this.OnRemove
+                Remove = this.OnRemove,
+                Detail = this.OnDetail
             };
+        }
+
+        private void OnDetail(Channel.ViewModel obj)
+        {
+            this.Detail?.Execute(obj);
         }
 
         private void OnRemove(Channel.ViewModel obj)

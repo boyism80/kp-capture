@@ -1,7 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace KPCapture.Control
@@ -9,49 +7,28 @@ namespace KPCapture.Control
     /// <summary>
     /// Interaction logic for IconButton.xaml
     /// </summary>
-    public partial class IconButton : UserControl
+    public partial class IconButton : Button
     {
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(IconButton));
-        public ICommand Command
+        public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof(ImageSource), typeof(IconButton));
+        public ImageSource Icon
         {
-            get { return (ICommand)GetValue(CommandProperty); }
-            set { SetValue(CommandProperty, value); }
-        }
-
-
-        public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof(string), typeof(IconButton), new FrameworkPropertyMetadata(string.Empty));
-        public string Icon
-        {
-            get { return GetValue(IconProperty).ToString(); }
+            get { return GetValue(IconProperty) as ImageSource; }
             set { SetValue(IconProperty, value); }
         }
 
 
-        public static readonly DependencyProperty IconWidthProperty = DependencyProperty.Register("IconWidth", typeof(int), typeof(IconButton), new FrameworkPropertyMetadata(10));
+        public static readonly DependencyProperty IconWidthProperty = DependencyProperty.Register("IconWidth", typeof(int), typeof(IconButton), new FrameworkPropertyMetadata(16));
         public int IconWidth
         {
             get { return (int)GetValue(IconWidthProperty); }
             set { SetValue(IconWidthProperty, value); }
         }
 
-        public static readonly DependencyProperty IconHeightProperty = DependencyProperty.Register("IconHeight", typeof(int), typeof(IconButton), new FrameworkPropertyMetadata(10));
-        public int IconHeight
+        public static readonly DependencyProperty IconMarginProperty = DependencyProperty.Register("IconMargin", typeof(Thickness), typeof(IconButton), new FrameworkPropertyMetadata(new Thickness(3)));
+        public Thickness IconMargin
         {
-            get { return (int)GetValue(IconHeightProperty); }
-            set { SetValue(IconHeightProperty, value); }
-        }
-
-        public static readonly DependencyProperty HoverHackgroundProperty = DependencyProperty.Register("HoverBackground", typeof(SolidColorBrush), typeof(IconButton), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Transparent)));
-        public SolidColorBrush HoverBackground
-        {
-            get { return (SolidColorBrush)GetValue(HoverHackgroundProperty); }
-            set { SetValue(HoverHackgroundProperty, value); }
-        }
-
-        public event RoutedEventHandler Click
-        {
-            add { this.button.AddHandler(ButtonBase.ClickEvent, value); }
-            remove { this.button.RemoveHandler(ButtonBase.ClickEvent, value); }
+            get { return (Thickness)GetValue(IconMarginProperty); }
+            set { SetValue(IconMarginProperty, value); }
         }
 
         public IconButton()

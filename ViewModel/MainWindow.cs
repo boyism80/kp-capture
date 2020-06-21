@@ -35,12 +35,16 @@ namespace KPCapture
                 } 
             }
 
+            public bool Running { get => this._watcher.Running; }
             public string StateText { get => this._watcher.Running ? "중단" : "캡처"; }
 
             public ICommand AddChannelCommand { get; private set; }
             public ICommand CaptureCommand { get; private set; }
             public ICommand ChannelRemoved { get; private set; }
             public ICommand ChannelDetail { get; private set; }
+            public ICommand SetMinimizeCommand { get; set; }
+            public ICommand SetMaximizeCommand { get; set; }
+            public ICommand CloseCommand { get; set; }
 
             public ViewModel(MainWindow Owner)
             {
@@ -51,6 +55,9 @@ namespace KPCapture
                 this.CaptureCommand = new RelayCommand(this.OnCapture);
                 this.ChannelRemoved = new RelayCommand(this.OnChannelRemoved);
                 this.ChannelDetail = new RelayCommand(this.OnChannelDetail);
+                this.SetMinimizeCommand = new RelayCommand(this.OnSetMinimize);
+                this.SetMaximizeCommand = new RelayCommand(this.OnSetMaximize);
+                this.CloseCommand = new RelayCommand(this.OnClose);
             }
 
             private void OnChannelDetail(object obj)
@@ -75,6 +82,7 @@ namespace KPCapture
                     this._watcher.Start(this._owner.HostEntryBox.SelectedItem as string);
 
                 this.OnPropertyChanged(nameof(this.StateText));
+                this.OnPropertyChanged(nameof(this.Running));
             }
 
             private void OnAddChannel(object obj)
@@ -138,6 +146,21 @@ namespace KPCapture
                     foreach (var channel in channels)
                         channel.Packets.Add(new Packet.ViewModel((uint)channel.Packets.Count + 1, packet));
                 }));
+            }
+
+            public void OnSetMinimize(object parameter)
+            {
+                this._owner.WindowState = System.Windows.WindowState.Minimized;
+            }
+
+            public void OnSetMaximize(object parameter)
+            {
+                this._owner.WindowState ^= System.Windows.WindowState.Maximized;
+            }
+
+            public void OnClose(object parameter)
+            {
+                this._owner.Close();
             }
         }
     }

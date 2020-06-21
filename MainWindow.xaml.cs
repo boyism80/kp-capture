@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows;
-using System.Linq;
-using Microsoft.Scripting.Utils;
+﻿using Be.Windows.Forms;
 using KPCapture.Model.Protocol;
-using Be.Windows.Forms;
+using Microsoft.Scripting.Utils;
+using System.Linq;
+using System.Windows;
 
 namespace KPCapture
 {
@@ -22,11 +21,6 @@ namespace KPCapture
             this.DataContext = this.MainFormViewModel;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
         private void PacketsGridView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             try
@@ -40,11 +34,6 @@ namespace KPCapture
                 this.RawHexBox.ByteProvider = null;
                 this.DecHexBox.ByteProvider = null;
             }
-        }
-
-        private void PacketsGridView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-
         }
     }
 }

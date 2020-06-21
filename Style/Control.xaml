@@ -926,16 +926,15 @@
                                         </Grid.ColumnDefinitions>
 
                                         <Button Grid.Column="0"
-                                                    Background="Transparent"
-                                                    BorderThickness="0"
-                                                    Margin="5" >
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Padding="5" >
                                             <ContentControl>
                                                 <Image Source="/Image/icon_caption.png"/>
                                             </ContentControl>
                                         </Button>
                                         <TextBlock Grid.Column="1" 
                                                        Text="{TemplateBinding Property=Title}" 
-                                                       Margin="10 0 0 0" 
                                                        VerticalAlignment="Center" 
                                                        Foreground="{StaticResource MainTextBrush}" />
                                         <control:SystemButton Grid.Column="2"

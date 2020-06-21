@@ -10,8 +10,7 @@
         xmlns:control="clr-namespace:KPCapture.Control" 
         xmlns:converter="clr-namespace:KPCapture.Converter"
         mc:Ignorable="d"
-        Title="KPCapture" Height="640" Width="1024"
-        Loaded="Window_Loaded">
+        Title="KPCapture" Height="640" Width="1024">
 
     <Window.Resources>
         <Style TargetType="{x:Type local:MainWindow}">
@@ -45,7 +44,7 @@
                                             <Button Grid.Column="0"
                                                     Background="Transparent"
                                                     BorderThickness="0"
-                                                    Margin="5" >
+                                                    Padding="5">
                                                 <ContentControl>
                                                     <Image Source="/Image/icon_caption.png"
                                                            RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -53,25 +52,26 @@
                                             </Button>
                                             <TextBlock Grid.Column="1" 
                                                        Text="{TemplateBinding Property=Title}" 
-                                                       Margin="10 0 0 0" 
                                                        VerticalAlignment="Center" 
                                                        Foreground="{StaticResource MainTextBrush}" />
                                             <StackPanel Grid.Column="2" Orientation="Horizontal">
                                                 <control:SystemButton Grid.Column="0"
-                                                                  Icon="/Image/minimize.png"
-                                                                  Background="{StaticResource SystemBrush}"
-                                                                  HoverBackground="{StaticResource ControlLightBackgroundBrush}"
-                                                                  Command="{Binding SetMinimizeCommand}" />
+                                                                      Icon="/Image/minimize.png"
+                                                                      Background="{StaticResource SystemBrush}"
+                                                                      HoverBackground="{StaticResource ControlLightBackgroundBrush}"
+                                                                      Command="{Binding SetMinimizeCommand}" />
                                                 <control:SystemButton Grid.Column="1"
-                                                                  Icon="{Binding WindowState, Converter={converter:MainWindowIconConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MainWindow}}"
-                                                                  Background="{StaticResource SystemBrush}"
-                                                                  HoverBackground="{StaticResource ControlLightBackgroundBrush}"
-                                                                  Command="{Binding SetMaximizeCommand}"/>
+                                                                      Icon="{Binding WindowState, Converter={converter:MainWindowIconConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MainWindow}}"
+                                                                      Width="34"
+                                                                      Height="36"
+                                                                      Background="{StaticResource SystemBrush}"
+                                                                      HoverBackground="{StaticResource ControlLightBackgroundBrush}"
+                                                                      Command="{Binding SetMaximizeCommand}"/>
                                                 <control:SystemButton Grid.Column="2"
-                                                                  Icon="/Image/close.png"
-                                                                  Background="{StaticResource SystemBrush}"
-                                                                  HoverBackground="{StaticResource ControlLightBackgroundBrush}"
-                                                                  Command="{Binding CloseCommand}"/>
+                                                                      Icon="/Image/close.png"
+                                                                      Background="{StaticResource SystemBrush}"
+                                                                      HoverBackground="{StaticResource ControlLightBackgroundBrush}"
+                                                                      Command="{Binding CloseCommand}"/>
                                             </StackPanel>
                                         </Grid>
                                     </Border>
@@ -259,8 +259,7 @@
                                           Grid.Column="0"
                                           ItemsSource="{Binding SelectedChannel.Packets}"
                                           Margin="0 0 5 0"
-                                          SelectionChanged="PacketsGridView_SelectionChanged"
-                                          MouseDoubleClick="PacketsGridView_MouseDoubleClick">
+                                          SelectionChanged="PacketsGridView_SelectionChanged">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="INDEX" Binding="{Binding Index}" />
                                         <DataGridTextColumn Header="SOURCE" Binding="{Binding Source}" />

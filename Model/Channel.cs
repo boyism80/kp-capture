@@ -76,6 +76,7 @@ namespace KPCapture.Model
         public int Id { get => this._process?.Id ?? -1; }
         public string Name { get => this._process?.ProcessName ?? string.Empty; }
         public PacketContainer Packets { get; private set; } = new PacketContainer();
+        public Filter Filter { get; private set; } = new Filter();
         
 
         public Channel(Process process)

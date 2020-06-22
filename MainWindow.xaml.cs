@@ -1,4 +1,5 @@
 ﻿using Be.Windows.Forms;
+using KPCapture.Dialog;
 using KPCapture.Model.Protocol;
 using Microsoft.Scripting.Utils;
 using System.Linq;

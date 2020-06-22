@@ -12,6 +12,7 @@ namespace KPCapture.Control
     {
         public Action<Channel.ViewModel> Remove { get; set; }
         public Action<Channel.ViewModel> Detail { get; set; }
+        public Action<Channel.ViewModel> Filter { get; set; }
 
         public ChannelControl()
         {
@@ -26,6 +27,11 @@ namespace KPCapture.Control
         private void OnDetail(object sender, RoutedEventArgs e)
         {
             this.Detail?.Invoke(this.DataContext as Channel.ViewModel);
+        }
+
+        private void OnFilter(object sender, RoutedEventArgs e)
+        {
+            this.Filter?.Invoke(this.DataContext as Channel.ViewModel);
         }
     }
 }

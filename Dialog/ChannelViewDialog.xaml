@@ -7,18 +7,9 @@
         mc:Ignorable="d"
         Foreground="{StaticResource MainTextBrush}"
         Style="{StaticResource DefaultWindowStyle}"
-        Title="ChannelViewDialog" Height="450" Width="800">
+        Title="채널 선택" Height="450" Width="800">
 
-    <WindowChrome.WindowChrome>
-        <WindowChrome 
-            ResizeBorderThickness="10"
-            CaptionHeight="30"
-            CornerRadius="0"
-            GlassFrameThickness="0"
-            />
-    </WindowChrome.WindowChrome>
-
-    <Grid Background="{StaticResource BackgroundBrush}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />

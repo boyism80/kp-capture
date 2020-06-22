@@ -4,6 +4,7 @@ using KPCapture.ViewModel;
 using Microsoft.Scripting.Utils;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -22,10 +23,18 @@ namespace KPCapture.Model
             public Channel Data { get; private set; }
 
             public ObservableCollection<Packet.ViewModel> Packets { get; private set; } = new ObservableCollection<Packet.ViewModel>();
+            public ObservableCollection<Packet.ViewModel> Filtered
+            {
+                get
+                {
+                    return new ObservableCollection<Packet.ViewModel>(this.Packets.Where(x => this.Filter.Pass(x)));
+                }
+            }
 
             public int Id { get => this.Data.Id; }
             public string Name { get => this.Data.Name; }
             public BitmapSource Icon { get; private set; }
+            public Filter.ViewModel Filter { get; set; }
 
             public ICommand RunCommand { get; private set; }
             public ICommand ClearCommand { get; private set; }
@@ -38,6 +47,7 @@ namespace KPCapture.Model
             public ViewModel(Channel channel)
             {
                 this.Data = channel;
+                this.Filter = new Filter.ViewModel(this.Data.Filter);
                 this.Packets.CollectionChanged += this.Packets_CollectionChanged;
                 this.RunCommand = new RelayCommand(this.OnRun);
                 this.ClearCommand = new RelayCommand(this.Clear);
@@ -88,6 +98,8 @@ namespace KPCapture.Model
                             this.Data.Packets.Remove(deleted);
                         break;
                 }
+
+                this.OnPropertyChanged(nameof(this.Filtered));
             }
         }
     }

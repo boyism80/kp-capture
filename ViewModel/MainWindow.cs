@@ -21,6 +21,7 @@ namespace KPCapture
             private MainWindow _owner;
             private Watcher _watcher;
             private ChannelViewDialog _channelViewDialog;
+            private FilterDialog _filterDialog;
 
             public ObservableCollection<Channel.ViewModel> Channels { get; private set; } = new ObservableCollection<Channel.ViewModel>();
             public Channel.ViewModel SelectedChannel { get; private set; }
@@ -44,9 +45,11 @@ namespace KPCapture
             public ICommand CaptureCommand { get; private set; }
             public ICommand ChannelRemoved { get; private set; }
             public ICommand ChannelDetail { get; private set; }
-            public ICommand SetMinimizeCommand { get; set; }
-            public ICommand SetMaximizeCommand { get; set; }
-            public ICommand CloseCommand { get; set; }
+            public ICommand ChannelFilter { get; private set; }
+            public ICommand SetMinimizeCommand { get; private set; }
+            public ICommand SetMaximizeCommand { get; private set; }
+            public ICommand CloseCommand { get; private set; }
+            public ICommand FilterCommand { get; private set; }
 
             public ViewModel(MainWindow Owner)
             {
@@ -57,9 +60,59 @@ namespace KPCapture
                 this.CaptureCommand = new RelayCommand(this.OnCapture);
                 this.ChannelRemoved = new RelayCommand(this.OnChannelRemoved);
                 this.ChannelDetail = new RelayCommand(this.OnChannelDetail);
+                this.ChannelFilter = new RelayCommand(this.OnChannelFilter);
                 this.SetMinimizeCommand = new RelayCommand(this.OnSetMinimize);
                 this.SetMaximizeCommand = new RelayCommand(this.OnSetMaximize);
                 this.CloseCommand = new RelayCommand(this.OnClose);
+                this.FilterCommand = new RelayCommand(this.OnFilter);
+            }
+
+            private void OnChannelFilter(object obj)
+            {
+                this.SelectedChannel = obj as Channel.ViewModel;
+                this.OnFilter(obj);
+            }
+
+            private void OnFilter(object obj)
+            {
+                if (this.IsSelected == false)
+                    return;
+
+                if (this._filterDialog == null)
+                {
+                    this.SelectedChannel.Filter.PropertyChanged += this.Filter_PropertyChanged;
+                    this._filterDialog = new FilterDialog(this.SelectedChannel)
+                    {
+                        Owner = this._owner,
+                    };
+                    this._filterDialog.Cancel += this._filterDialog_Cancel;
+                    this._filterDialog.Closed += this._filterDialog_Closed;
+                    this._filterDialog.Show();
+                }
+                else if (this._filterDialog.Channel != this.SelectedChannel)
+                {
+                    this._filterDialog.Channel = this.SelectedChannel;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            private void Filter_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            {
+                this.SelectedChannel?.OnPropertyChanged(nameof(this.SelectedChannel.Filtered));
+            }
+
+            private void _filterDialog_Cancel(object sender, EventArgs e)
+            {
+                this.SelectedChannel.Filter.PropertyChanged -= this.Filter_PropertyChanged;
+                this.SelectedChannel.Filter = new Filter.ViewModel(this._filterDialog.Before);
+            }
+
+            private void _filterDialog_Closed(object sender, EventArgs e)
+            {
+                this._filterDialog = null;
             }
 
             private void OnChannelDetail(object obj)

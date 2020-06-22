@@ -54,11 +54,12 @@
                         Command="{Binding RunCommand}"/>
                     <control:IconButton
                         Icon="/Image/filter.png"
-                        IconWidth="12"/>
+                        IconWidth="12"
+                        Click="OnFilter"/>
                     <control:IconButton
                         Icon="/Image/recycle bin.png"
-                        Command="{Binding ClearCommand}"
-                        IconWidth="12"/>
+                        IconWidth="12"
+                        Command="{Binding ClearCommand}"/>
                     <control:IconButton
                         Icon="/Image/remove.png"
                         IconWidth="12"

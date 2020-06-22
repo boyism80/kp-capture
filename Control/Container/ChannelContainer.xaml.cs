@@ -25,6 +25,13 @@ namespace KPCapture.Control.Container
             set { SetValue(DetailProperty, value); }
         }
 
+        public static readonly DependencyProperty FilterProperty = DependencyProperty.Register("Filter", typeof(ICommand), typeof(ChannelContainer));
+        public ICommand Filter
+        {
+            get { return GetValue(FilterProperty) as ICommand; }
+            set { SetValue(FilterProperty, value); }
+        }
+
         public ChannelContainer()
         {
             InitializeComponent();
@@ -41,8 +48,14 @@ namespace KPCapture.Control.Container
             {
                 DataContext = context,
                 Remove = this.OnRemove,
-                Detail = this.OnDetail
+                Detail = this.OnDetail,
+                Filter = this.OnFilter
             };
+        }
+
+        private void OnFilter(Channel.ViewModel obj)
+        {
+            this.Filter?.Execute(obj);
         }
 
         private void OnDetail(Channel.ViewModel obj)

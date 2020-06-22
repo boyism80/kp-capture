@@ -894,6 +894,16 @@
 
 
     <Style x:Key="DefaultWindowStyle" TargetType="{x:Type Window}">
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome 
+                    ResizeBorderThickness="10"
+                    CaptionHeight="30"
+                    CornerRadius="0"
+                    GlassFrameThickness="0"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
         <Setter Property="WindowStyle" Value="None" />
         <Setter Property="ResizeMode" Value="NoResize" />
         <Setter Property="ShowInTaskbar" Value="False" />
@@ -949,7 +959,8 @@
                                     </Grid>
                                 </Border>
 
-                                <Grid Grid.Row="1">
+                                <Grid Grid.Row="1"
+                                      Background="{TemplateBinding Background}">
                                     <ContentPresenter Content="{TemplateBinding Content}" />
                                 </Grid>
                             </Grid>

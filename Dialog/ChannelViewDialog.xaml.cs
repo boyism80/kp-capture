@@ -35,6 +35,8 @@ namespace KPCapture.Dialog
 
             foreach (var x in this.Selected)
                 this.vm.Channels.Remove(x);
+
+            this.vm.OnPropertyChanged(nameof(this.vm.FilteredChannels));
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)

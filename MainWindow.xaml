@@ -105,7 +105,7 @@
                                             <TextBox Style="{StaticResource SearchTextBox}" 
                                                      Width="250" 
                                                      Margin="0 0 0 10"
-                                                     Text="{Binding MultipleReceiverViewModel.FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     Text="{Binding ChannelFilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                      Tag="검색" />
                                         </StackPanel>
                                     </Grid>
@@ -211,7 +211,7 @@
                                     Command="{Binding CaptureCommand}"/>
                         </StackPanel>
                         <container:ChannelContainer
-                            ItemsSource="{Binding Channels}"
+                            ItemsSource="{Binding FilteredChannels}"
                             Remove="{Binding ChannelRemoved}"
                             Detail="{Binding ChannelDetail}"
                             Filter="{Binding ChannelFilter}"/>

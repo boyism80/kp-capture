@@ -24,8 +24,22 @@ namespace KPCapture
             private FilterDialog _filterDialog;
 
             public ObservableCollection<Channel.ViewModel> Channels { get; private set; } = new ObservableCollection<Channel.ViewModel>();
+            public ObservableCollection<Channel.ViewModel> FilteredChannels
+            {
+                get
+                {
+                    return new ObservableCollection<Channel.ViewModel>(this.Channels.Where(x =>
+                    {
+                        if (string.IsNullOrEmpty(this.ChannelFilterText))
+                            return true;
+
+                        return $"{x.Id}".IndexOf(this.ChannelFilterText, StringComparison.OrdinalIgnoreCase) >= 0 || x.Name.IndexOf(this.ChannelFilterText, StringComparison.OrdinalIgnoreCase) >= 0;
+                    }));
+                }
+            }
             public Channel.ViewModel SelectedChannel { get; private set; }
             public bool IsSelected { get => this.SelectedChannel != null; }
+            public string ChannelFilterText { get; set; }
 
             public List<string> HostEntries 
             {
@@ -55,6 +69,7 @@ namespace KPCapture
             {
                 this._owner = Owner;
                 this._watcher = new Watcher(this);
+                this.Channels.CollectionChanged += this.Channels_CollectionChanged;
 
                 this.AddChannelCommand = new RelayCommand(this.OnAddChannel);
                 this.CaptureCommand = new RelayCommand(this.OnCapture);
@@ -65,6 +80,11 @@ namespace KPCapture
                 this.SetMaximizeCommand = new RelayCommand(this.OnSetMaximize);
                 this.CloseCommand = new RelayCommand(this.OnClose);
                 this.FilterCommand = new RelayCommand(this.OnFilter);
+            }
+
+            private void Channels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            {
+                this.OnPropertyChanged(nameof(this.FilteredChannels));
             }
 
             private void OnChannelFilter(object obj)

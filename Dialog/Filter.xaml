@@ -3,10 +3,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:header="clr-namespace:KPCapture.Model.Protocol.Header"
         xmlns:local="clr-namespace:KPCapture.Dialog"
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
         Title="설정" Height="640" Width="480">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="ProtocolCollection" 
+                            MethodName="GetValues" 
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="header:Protocol"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -37,7 +49,8 @@
                                        Text="Bytes"/>
                             <TextBox Text="{Binding HexBytes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock Style="{DynamicResource Exception}"
-                                       Text="Exception" />
+                                       Text="{Binding PreviewHexText}" 
+                                       Foreground="{StaticResource DisableForegroundBrush}"/>
                         </StackPanel>
 
 
@@ -46,7 +59,7 @@
                                        Text="Source Address"/>
                             <TextBox Text="{Binding SourceAddressText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock Style="{DynamicResource Exception}"
-                                       Text="Exception"/>
+                                       Text="{Binding SourceException}"/>
                         </StackPanel>
 
                         <StackPanel Style="{DynamicResource Wrap}">
@@ -54,18 +67,14 @@
                                        Text="Destination Address"/>
                             <TextBox Text="{Binding DestAddressText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock Style="{DynamicResource Exception}"
-                                       Text="Exception" />
+                                       Text="{Binding DestException}" />
                         </StackPanel>
 
                         <StackPanel Style="{DynamicResource Wrap}">
                             <TextBlock Style="{DynamicResource Header}"
                                        Text="Protocol"/>
-                            <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}">
-                                <ComboBoxItem>TCP</ComboBoxItem>
-                                <ComboBoxItem>UDP</ComboBoxItem>
-                            </ComboBox>
-                            <TextBlock Style="{DynamicResource Exception}"
-                                       Text="Exception" />
+                            <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}"
+                                      ItemsSource="{Binding Source={StaticResource ProtocolCollection}}"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Net;
 
@@ -9,7 +10,7 @@ namespace KPCapture.Model.Protocol.Header
     {
         TCP = 6,
         UDP = 17,
-        Unknown = -1
+        NONE = -1
     };
 
     public abstract class Base
@@ -185,7 +186,7 @@ namespace KPCapture.Model.Protocol.Header
                 else if (this._protocol == 17)
                     return Protocol.UDP;
                 else
-                    return Protocol.Unknown;
+                    return Protocol.NONE;
             }
         }
 

@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace KPCapture.Model.Protocol
 {
@@ -11,6 +12,8 @@ namespace KPCapture.Model.Protocol
     {
         public class ViewModel : BaseViewModel
         {
+            private const string REGEX_IP_PATTERN = @"^(?<host>\d{1,3}(\.\d{1,3}){3})|(:(?<port>\d+))$";
+
             private Filter _data;
 
             public IPAddress Source
@@ -18,7 +21,6 @@ namespace KPCapture.Model.Protocol
                 get => this._data.Source;
                 set => this._data.Source = value;
             }
-
             public int? SourcePort
             {
                 get => this._data.SourcePort;
@@ -33,30 +35,28 @@ namespace KPCapture.Model.Protocol
                 {
                     try
                     {
-                        var splitted = value.Split(':');
-                        if (splitted.Length == 0)
-                            throw new Exception();
+                        var match = Regex.Match(value, REGEX_IP_PATTERN);
+                        if (match.Success == false)
+                            throw new Exception("Invalid IP address format.");
 
-                        if (splitted.Length == 1)
-                        {
-                            this.Source = IPAddress.Parse(value);
+                        this.Source = IPAddress.Parse(match.Groups["host"].Value);
+                        if (string.IsNullOrEmpty(match.Groups["port"].Value))
                             this.SourcePort = null;
-                        }
                         else
-                        {
-                            this.Source = IPAddress.Parse(splitted[0]);
-                            this.SourcePort = int.Parse(splitted[1]);
-                        }
+                            this.SourcePort = int.Parse(match.Groups["port"].Value);
+                        this.SourceException = string.Empty;
                     }
-                    catch
+                    catch(Exception e)
                     {
                         this.Source = null;
                         this.SourcePort = null;
+                        this.SourceException = e.Message;
                     }
 
                     this._sourceAddressText = value;
                 }
             }
+            public string SourceException { get; private set; }
 
             private string _destAddressText = string.Empty;
             public string DestAddressText
@@ -66,30 +66,28 @@ namespace KPCapture.Model.Protocol
                 {
                     try
                     {
-                        var splitted = value.Split(':');
-                        if (splitted.Length == 0)
-                            throw new Exception();
+                        var match = Regex.Match(value, REGEX_IP_PATTERN);
+                        if (match.Success == false)
+                            throw new Exception("Invalid IP address format.");
 
-                        if (splitted.Length == 1)
-                        {
-                            this.Dest = IPAddress.Parse(value);
+                        this.Dest = IPAddress.Parse(match.Groups["host"].Value);
+                        if (string.IsNullOrEmpty(match.Groups["port"].Value))
                             this.DestPort = null;
-                        }
                         else
-                        {
-                            this.Dest = IPAddress.Parse(splitted[0]);
-                            this.DestPort = int.Parse(splitted[1]);
-                        }
+                            this.DestPort = int.Parse(match.Groups["port"].Value);
+                        this.DestException = string.Empty;
                     }
-                    catch
+                    catch (Exception e)
                     {
                         this.Dest = null;
                         this.DestPort = null;
+                        this.DestException = e.Message;
                     }
 
                     this._destAddressText = value;
                 }
             }
+            public string DestException { get; private set; }
 
             public IPAddress Dest
             {
@@ -106,7 +104,7 @@ namespace KPCapture.Model.Protocol
             public Header.Protocol? Protocol
             {
                 get => this._data.Protocol;
-                set => this._data.Protocol = value;
+                set => this._data.Protocol = (value == Header.Protocol.NONE ? null : value);
             }
 
             private string _hexBytes = string.Empty;
@@ -128,6 +126,9 @@ namespace KPCapture.Model.Protocol
                                 .Where(x => x.Length == 2)
                                 .Select(x => Convert.ToByte(x, 16))
                                 .ToArray();
+
+                            if (this._data.Bytes.Length == 0)
+                                throw new Exception();
                         }
                     }
                     catch
@@ -135,9 +136,14 @@ namespace KPCapture.Model.Protocol
                         this._data.Bytes = Encoding.UTF8.GetBytes(this._hexBytes);
                     }
 
+                    if (this._data.Bytes != null)
+                        this.PreviewHexText = BitConverter.ToString(this._data.Bytes).Replace('-', ' ');
+                    else
+                        this.PreviewHexText = string.Empty;
                     this._hexBytes = value;
                 }
             }
+            public string PreviewHexText { get; private set; }
 
             public ViewModel(Filter data)
             {

@@ -34,14 +34,12 @@ namespace KPCapture.Dialog
 
         private void OnComplete(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = true;
             this.Complete?.Invoke(this, EventArgs.Empty);
             this.Close();
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
             this.Cancel?.Invoke(this, EventArgs.Empty);
             this.Close();
         }

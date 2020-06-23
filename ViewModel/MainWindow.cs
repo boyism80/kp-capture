@@ -39,6 +39,7 @@ namespace KPCapture
             }
             public Channel.ViewModel SelectedChannel { get; private set; }
             public bool IsSelected { get => this.SelectedChannel != null; }
+            public bool IsChannelEmpty { get => this.Channels.Count == 0; }
             public string ChannelFilterText { get; set; }
 
             public List<string> HostEntries 
@@ -85,6 +86,7 @@ namespace KPCapture
             private void Channels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
             {
                 this.OnPropertyChanged(nameof(this.FilteredChannels));
+                this.OnPropertyChanged(nameof(this.IsChannelEmpty));
             }
 
             private void OnChannelFilter(object obj)

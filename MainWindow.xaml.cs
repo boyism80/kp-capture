@@ -31,14 +31,21 @@ namespace KPCapture
         {
             while (true)
             {
-                var runnings = Process.GetProcesses().Select(x => x.Id);
-                var exits = this.MainFormViewModel.Channels.Where(x => runnings.Contains(x.Id) == false).ToList();
-
-                this.Dispatcher.Invoke(() => 
+                try
                 {
-                    foreach (var exit in exits)
-                        this.MainFormViewModel.Channels.Remove(exit);
-                });
+                    var runnings = Process.GetProcesses().Select(x => x.Id);
+                    var exits = this.MainFormViewModel.Channels.Where(x => runnings.Contains(x.Id) == false).ToList();
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        foreach (var exit in exits)
+                            this.MainFormViewModel.Channels.Remove(exit);
+                    });
+                }
+                catch
+                {
+                    Thread.Sleep(500);
+                }
             }
         }
 

@@ -68,6 +68,9 @@ namespace KPCapture.Dialog
 
         private void OnScriptChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            if (this.Contents == null)
+                return;
+
             try
             {
                 var path = (sender as TextBox).Text;

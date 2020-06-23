@@ -97,7 +97,7 @@ namespace KPCapture.Model.Protocol
             }
             catch
             {
-                return null;
+                return packet.Bytes;
             }
         }
     }

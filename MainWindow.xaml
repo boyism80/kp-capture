@@ -88,16 +88,8 @@
                                               Background="{StaticResource SystemBrush}" 
                                               Foreground="{StaticResource MainTextBrush}" 
                                               Padding="10 10">
-                                            <MenuItem Header="파일">
-                                                <MenuItem Header="섹스"
-                                                      Command="{Binding ExplorerFramesCommand}"/>
-                                            </MenuItem>
-                                            <MenuItem Header="채널">
-                                                <MenuItem Header="추가"
-                                                          Command="{Binding NewConnectionCommand}"/>
-                                                <MenuItem Header="필터"
-                                                          Command="{Binding NewConnectionCommand}"/>
-                                            </MenuItem>
+                                            <MenuItem Header="파일" />
+                                            <MenuItem Header="채널" />
                                         </Menu>
                                         <StackPanel Grid.Column="1"
                                                     Orientation="Horizontal"
@@ -182,7 +174,7 @@
                                     BorderThickness="0"
                                     Command="{Binding AboutCommand}"/>
                         </StackPanel>
-                        <TextBlock Text="Copyright © 2019 HMO All rights reserved." 
+                        <TextBlock Text="Made by boyism80@gmail.com" 
                                        Grid.Row="1"
                                        FontSize="{StaticResource FontSizeSmall}" 
                                        TextAlignment="Right" 
@@ -194,9 +186,14 @@
             <TabControl x:Name="MainTab"
                         Background="{StaticResource BackgroundBrush}">
                 <TabItem Header="Home">
-                    <DockPanel LastChildFill="True"
-                               Margin="0 15">
-                        <StackPanel Orientation="Horizontal"
+                    <Grid Margin="0 15">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        
+                        <StackPanel Grid.Row="0"
+                                    Orientation="Horizontal"
                                     DockPanel.Dock="Top"
                                     HorizontalAlignment="Right"
                                     Margin="0 0 0 15">
@@ -212,11 +209,25 @@
                                     Command="{Binding CaptureCommand}"/>
                         </StackPanel>
                         <container:ChannelContainer
+                            Grid.Row="1"
                             ItemsSource="{Binding FilteredChannels}"
                             Remove="{Binding ChannelRemoved}"
                             Detail="{Binding ChannelDetail}"
                             Filter="{Binding ChannelFilter}"/>
-                    </DockPanel>
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Vertical"
+                                    Visibility="{c:Binding IsChannelEmpty, FalseToVisibility=Collapsed}"
+                                    VerticalAlignment="Center"
+                                    Margin="0 -50 0 0">
+                            <TextBlock Text="There is not any channels."
+                                       FontSize="32"
+                                       FontWeight="Bold"
+                                       TextAlignment="Center"/>
+                            <TextBlock Text="Please add one or more channels."
+                                       FontSize="14"
+                                       TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
                 </TabItem>
                 <TabItem Header="Detail">
                     <Grid>

@@ -13,7 +13,7 @@ namespace KPCapture.Model.Protocol
     {
         public class ViewModel : BaseViewModel
         {
-            private const string REGEX_IP_PATTERN = @"^(?<host>\d{1,3}(\.\d{1,3}){3})|(:(?<port>\d+))$";
+            private const string REGEX_IP_PATTERN = @"^(?<host>\d{1,3}(\.\d{1,3}){3})(|:(?<port>\d+))$";
 
             private Filter _data;
 

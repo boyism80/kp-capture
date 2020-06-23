@@ -1,8 +1,9 @@
 ﻿using Be.Windows.Forms;
-using KPCapture.Dialog;
 using KPCapture.Model.Protocol;
 using Microsoft.Scripting.Utils;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace KPCapture
@@ -12,14 +13,33 @@ namespace KPCapture
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Thread _detectExitChannelThread;
+
         public ViewModel MainFormViewModel { get; private set; }
 
         public MainWindow()
         {
             this.MainFormViewModel = new ViewModel(this);
-
-            InitializeComponent();
             this.DataContext = this.MainFormViewModel;
+            InitializeComponent();
+
+            this._detectExitChannelThread = new Thread(this.OnDetectExitChannel);
+            this._detectExitChannelThread.Start();
+        }
+
+        private void OnDetectExitChannel()
+        {
+            while (true)
+            {
+                var runnings = Process.GetProcesses().Select(x => x.Id);
+                var exits = this.MainFormViewModel.Channels.Where(x => runnings.Contains(x.Id) == false).ToList();
+
+                this.Dispatcher.Invoke(() => 
+                {
+                    foreach (var exit in exits)
+                        this.MainFormViewModel.Channels.Remove(exit);
+                });
+            }
         }
 
         private void PacketsGridView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -35,6 +55,11 @@ namespace KPCapture
                 this.RawHexBox.ByteProvider = null;
                 this.DecHexBox.ByteProvider = null;
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this._detectExitChannelThread.Abort();
         }
     }
 }

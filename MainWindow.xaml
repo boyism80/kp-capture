@@ -10,7 +10,8 @@
         xmlns:control="clr-namespace:KPCapture.Control" 
         xmlns:converter="clr-namespace:KPCapture.Converter"
         mc:Ignorable="d"
-        Title="KPCapture" Height="640" Width="1024">
+        Title="KPCapture" Height="640" Width="1024"
+        Closing="Window_Closing">
 
     <Window.Resources>
         <Style TargetType="{x:Type local:MainWindow}">

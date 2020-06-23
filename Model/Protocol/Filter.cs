@@ -1,21 +1,55 @@
-﻿using System.Linq;
+﻿using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
+using System;
+using System.IO;
+using System.Linq;
 using System.Net;
 
 namespace KPCapture.Model.Protocol
 {
     public partial class Filter
     {
+        private static ScriptEngine SCRIPT_ENGINE = Python.CreateEngine();
+
+        private ScriptScope _scriptScope;
+        private string _script;
+
         public IPAddress Source { get; set; }
         public int? SourcePort { get; set; }
         public IPAddress Dest { get; set; }
         public int? DestPort { get; set; }
         public byte[] Bytes { get; set; }
         public Header.Protocol? Protocol { get; set; }
+        public string Script
+        {
+            get => this._script;
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    this._scriptScope = null;
+                }
+                else if (this._script != value)
+                {
+                    if (File.Exists(value) == false)
+                        return;
+
+                    this._scriptScope = SCRIPT_ENGINE.ExecuteFile(value);
+                    this._scriptScope.GetVariable("decrypt");
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
 
         public Filter()
-        { }
+        {
+            
+        }
 
-        public Filter(Filter filter)
+        public Filter(Filter filter) : this()
         {
             this.Source = filter.Source;
             this.SourcePort = filter.SourcePort;
@@ -46,6 +80,25 @@ namespace KPCapture.Model.Protocol
                 return false;
 
             return true;
+        }
+
+        public byte[] Decrypt(Packet packet)
+        {
+            try
+            {
+                if (this._scriptScope == null)
+                    throw new FileNotFoundException();
+
+                var decryptFunc = this._scriptScope.GetVariable<Func<byte[], byte[]>>("decrypt");
+                if (decryptFunc == null)
+                    throw new Exception();
+
+                return decryptFunc(packet.Bytes);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 

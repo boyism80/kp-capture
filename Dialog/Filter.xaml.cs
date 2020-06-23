@@ -1,7 +1,11 @@
 ﻿using KPCapture.Model;
 using KPCapture.Model.Protocol;
+using Microsoft.Win32;
 using System;
+using System.IO;
+using System.Runtime.Remoting.Messaging;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace KPCapture.Dialog
 {
@@ -24,6 +28,7 @@ namespace KPCapture.Dialog
 
         public event EventHandler Complete;
         public event EventHandler Cancel;
+        public event EventHandler<string> ScriptChanged;
 
         public FilterDialog(Channel.ViewModel vm)
         {
@@ -42,6 +47,36 @@ namespace KPCapture.Dialog
         {
             this.Cancel?.Invoke(this, EventArgs.Empty);
             this.Close();
+        }
+
+        private void OnFindScript(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog()
+            {
+                Title = "Python script",
+                Multiselect = false,
+                DefaultExt = "py",
+                Filter = "Python script file (*.py)|*.py"
+            };
+
+            if (dialog.ShowDialog(this.Owner) == true)
+            {
+                this.Contents.Text = File.ReadAllText(dialog.FileName);
+                this.ScriptChanged?.Invoke(this, dialog.FileName);
+            }
+        }
+
+        private void OnScriptChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            try
+            {
+                var path = (sender as TextBox).Text;
+                this.Contents.Text = File.ReadAllText(path);
+            }
+            catch
+            {
+                this.Contents.Text = string.Empty;
+            }
         }
     }
 }

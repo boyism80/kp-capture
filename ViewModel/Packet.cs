@@ -7,8 +7,20 @@ namespace KPCapture.Model.Protocol
     {
         public class ViewModel : BaseViewModel
         {
-            public Packet Data { get; private set; }
+            private byte[] _decryptedBytesCache;
+            public byte[] DecryptedBytes
+            {
+                get 
+                {
+                    if (this._decryptedBytesCache == null)
+                        this._decryptedBytesCache = this.Owner.Filter.Decrypt(this);
 
+                    return this._decryptedBytesCache;
+                }
+            }
+
+            public Packet Data { get; private set; }
+            public Channel.ViewModel Owner { get; private set; }
             public uint Index { get; private set; }
             public string Source { get => $"{this.Data.SourceAddress}:{this.Data.SourcePort}"; }
             public string Destination { get => $"{this.Data.DestinationAddress}:{this.Data.DestinationPort}"; }
@@ -17,9 +29,10 @@ namespace KPCapture.Model.Protocol
             public string TimeStamp { get => this.Data.DateTime.ToString("yyyy/MM/dd HH:mm:ss"); }
             public string Protocol { get => this.Data.Protocol.ToString(); }
 
-            public ViewModel(uint index, Packet packet)
+            public ViewModel(Channel.ViewModel owner, Packet packet)
             {
-                this.Index = index;
+                this.Owner = owner;
+                this.Index = (uint)this.Owner.Packets.Count + 1;
                 this.Data = packet;
             }
         }

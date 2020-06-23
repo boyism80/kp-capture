@@ -107,6 +107,7 @@ namespace KPCapture
                     };
                     this._filterDialog.Cancel += this._filterDialog_Cancel;
                     this._filterDialog.Closed += this._filterDialog_Closed;
+                    this._filterDialog.ScriptChanged += this._filterDialog_ScriptChanged;
                     this._filterDialog.Show();
                 }
                 else if (this._filterDialog.Channel != this.SelectedChannel)
@@ -117,6 +118,14 @@ namespace KPCapture
                 {
                     return;
                 }
+            }
+
+            private void _filterDialog_ScriptChanged(object sender, string e)
+            {
+                if (this.SelectedChannel == null)
+                    return;
+
+                this.SelectedChannel.Filter.Script = e;
             }
 
             private void Filter_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -222,7 +231,7 @@ namespace KPCapture
                 this._owner.Dispatcher.BeginInvoke(new Action(() => 
                 {
                     foreach (var channel in channels)
-                        channel.Packets.Add(new Packet.ViewModel((uint)channel.Packets.Count + 1, packet));
+                        channel.Packets.Add(new Packet.ViewModel(channel, packet));
                 }));
             }
 

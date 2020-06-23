@@ -1,6 +1,7 @@
 ﻿using KPCapture.ViewModel;
 using Microsoft.Scripting.Utils;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -145,6 +146,28 @@ namespace KPCapture.Model.Protocol
             }
             public string PreviewHexText { get; private set; }
 
+            private string _script = string.Empty;
+            public string Script
+            {
+                get => this._script;
+                set
+                {
+                    try
+                    {
+                        if (File.Exists(value) == false)
+                            throw new Exception($"Not found script file : {value}");
+
+                        this._data.Script = value;
+                    }
+                    catch
+                    {
+                        this._data.Script = string.Empty;
+                    }
+                    
+                    this._script = value;
+                }
+            }
+
             public ViewModel(Filter data)
             {
                 this._data = data;
@@ -156,6 +179,11 @@ namespace KPCapture.Model.Protocol
             public bool Pass(Packet.ViewModel vm)
             {
                 return this._data.Pass(vm.Data);
+            }
+
+            public byte[] Decrypt(Packet.ViewModel vm)
+            {
+                return this._data.Decrypt(vm.Data);
             }
         }
     }

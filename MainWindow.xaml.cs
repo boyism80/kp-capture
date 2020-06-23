@@ -28,7 +28,7 @@ namespace KPCapture
             {
                 var item = e.AddedItems.Select(x => x as Packet.ViewModel).First();
                 this.RawHexBox.ByteProvider = new DynamicByteProvider(item.Bytes);
-                this.DecHexBox.ByteProvider = new DynamicByteProvider(item.Bytes);
+                this.DecHexBox.ByteProvider = new DynamicByteProvider(item.DecryptedBytes);
             }
             catch
             {

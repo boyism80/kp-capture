@@ -288,6 +288,7 @@
                                         <WindowsFormsHost>
                                             <forms:HexBox x:Name="RawHexBox"
                                                           StringViewVisible="True"
+                                                          ReadOnly="True"
                                                           BackColor="{StaticResource RawBackground}"
                                                           BorderStyle="None"
                                                           LineInfoVisible="True"/>
@@ -299,6 +300,7 @@
                                         <WindowsFormsHost>
                                             <forms:HexBox x:Name="DecHexBox"
                                                           StringViewVisible="True"
+                                                          ReadOnly="True"
                                                           BackColor="{StaticResource RawBackground}"
                                                           BorderStyle="None"
                                                           LineInfoVisible="True"/>

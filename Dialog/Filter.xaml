@@ -79,7 +79,39 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="복호화"></TabItem>
+            <TabItem Header="복호화">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0"
+                          Margin="0 0 0 10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" 
+                                   Text="경로"
+                                   VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" 
+                                 Text="{Binding Script, Mode=TwoWay}"
+                                 TextChanged="OnScriptChanged"
+                                 Margin="10 0"/>
+                        <Button Grid.Column="2" 
+                                Content="경로"
+                                Margin="0"
+                                Click="OnFindScript"/>
+                    </Grid>
+                    <TextBox Grid.Row="2"
+                             VerticalContentAlignment="Top"
+                             x:Name="Contents"
+                             Background="Transparent"
+                             IsReadOnly="True"
+                             VerticalScrollBarVisibility="Auto"/>
+                </Grid>
+            </TabItem>
         </TabControl>
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal"

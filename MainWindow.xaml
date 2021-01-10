@@ -48,7 +48,9 @@
                                                     Padding="5">
                                                 <ContentControl>
                                                     <Image Source="/Image/icon_caption.png"
-                                                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                                                           RenderOptions.BitmapScalingMode="HighQuality"
+                                                           Width="16"
+                                                           Height="16"/>
                                                 </ContentControl>
                                             </Button>
                                             <TextBlock Grid.Column="1" 

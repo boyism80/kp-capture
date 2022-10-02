@@ -940,7 +940,7 @@
                                                 BorderThickness="0"
                                                 Padding="5" >
                                             <ContentControl>
-                                                <Image Source="/Image/icon_caption.png"/>
+                                                <Image Source="/Image/icon_caption.png" Width="15"/>
                                             </ContentControl>
                                         </Button>
                                         <TextBlock Grid.Column="1" 

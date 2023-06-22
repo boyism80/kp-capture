@@ -2,7 +2,7 @@
                     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:control="clr-namespace:KPCapture.Control"
+                    xmlns:uc="clr-namespace:KPCapture.Control"
                     xmlns:mwt="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Color.xaml" />
@@ -947,7 +947,7 @@
                                                        Text="{TemplateBinding Property=Title}" 
                                                        VerticalAlignment="Center" 
                                                        Foreground="{StaticResource MainTextBrush}" />
-                                        <control:SystemButton Grid.Column="2"
+                                        <uc:SystemButton Grid.Column="2"
                                                           HoverBackground="{StaticResource ControlLightBackgroundBrush}"
                                                           Icon="/Image/close.png">
                                             <i:Interaction.Triggers>
@@ -955,7 +955,7 @@
                                                     <ei:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" MethodName="Close" />
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>
-                                        </control:SystemButton>
+                                        </uc:SystemButton>
                                     </Grid>
                                 </Border>
 

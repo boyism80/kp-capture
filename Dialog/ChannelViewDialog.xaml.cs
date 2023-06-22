@@ -1,5 +1,4 @@
-﻿using KPCapture.Model;
-using Microsoft.Scripting.Utils;
+﻿using Microsoft.Scripting.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,41 +11,41 @@ namespace KPCapture.Dialog
     /// </summary>
     public partial class ChannelViewDialog : Window
     {
-        public ViewModel vm { get; private set; }
+        public ViewModel.ChannelViewDialog vm { get; private set; }
 
-        public List<Channel.ViewModel> Selected { get; private set; } = new List<Channel.ViewModel>();
+        public List<ViewModel.Channel> Selected { get; private set; } = new List<ViewModel.Channel>();
 
         public event EventHandler Complete;
 
-        public ChannelViewDialog(IEnumerable<Channel> attachedList)
+        public ChannelViewDialog(IEnumerable<ViewModel.Channel> attachedList)
         {
             InitializeComponent();
 
-            this.vm = new ViewModel(attachedList);
-            this.DataContext = this.vm;
+            vm = new ViewModel.ChannelViewDialog(attachedList);
+            DataContext = vm;
         }
 
         private void OnComplete(object sender, RoutedEventArgs e)
         {
-            if (this.Selected.Count == 0)
+            if (Selected.Count == 0)
                 return;
 
-            this.Complete?.Invoke(this, EventArgs.Empty);
+            Complete?.Invoke(this, EventArgs.Empty);
 
-            foreach (var x in this.Selected)
-                this.vm.Channels.Remove(x);
+            foreach (var x in Selected)
+                vm.Channels.Remove(x);
 
-            this.vm.OnPropertyChanged(nameof(this.vm.FilteredChannels));
+            //vm.OnPropertyChanged(nameof(vm.FilteredChannels));
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void ChannelListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            this.Selected = this.ChannelListView.SelectedItems.Select(x => x as Channel.ViewModel).ToList();
+            Selected = ChannelListView.SelectedItems.Select(x => x as ViewModel.Channel).ToList();
         }
     }
 }

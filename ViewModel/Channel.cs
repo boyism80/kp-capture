@@ -1,9 +1,8 @@
 ﻿using KPCapture.Command;
-using KPCapture.Model.Protocol;
-using KPCapture.ViewModel;
 using Microsoft.Scripting.Utils;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -11,96 +10,86 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
-namespace KPCapture.Model
+namespace KPCapture.ViewModel
 {
-    public partial class Channel
+    public class Channel : INotifyPropertyChanged
     {
-        public class ViewModel : BaseViewModel
+        [DllImport("gdi32.dll", SetLastError = true)]
+        private static extern bool DeleteObject(IntPtr hObject);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Model.Channel Model { get; private set; }
+
+        public ObservableCollection<ViewModel.Packet> Packets { get; private set; } = new ObservableCollection<ViewModel.Packet>();
+        public ObservableCollection<ViewModel.Packet> Filtered => new ObservableCollection<ViewModel.Packet>(Packets.Where(x => Filter.Pass(x)));
+
+        public int Id => Model.Id;
+        public string Name => Model.Name;
+        public BitmapSource Icon { get; private set; }
+        public ViewModel.Filter Filter { get; set; }
+        public string RunIcon => Model.Packets.Enabled ? "/Image/play.png" : "/Image/pause.png";
+
+        public ICommand RunCommand { get; private set; }
+        public ICommand ClearCommand { get; private set; }
+
+        public Channel(Model.Channel channel)
         {
-            [DllImport("gdi32.dll", SetLastError = true)]
-            private static extern bool DeleteObject(IntPtr hObject);
+            Model = channel;
+            Filter = new ViewModel.Filter(Model.Filter);
+            Filter.PropertyChanged += Filter_PropertyChanged;
+            Packets.CollectionChanged += Packets_CollectionChanged;
+            RunCommand = new RelayCommand(OnRun);
+            ClearCommand = new RelayCommand(Clear);
 
-            public Channel Data { get; private set; }
-
-            public ObservableCollection<Packet.ViewModel> Packets { get; private set; } = new ObservableCollection<Packet.ViewModel>();
-            public ObservableCollection<Packet.ViewModel> Filtered
+            try
             {
-                get
-                {
-                    return new ObservableCollection<Packet.ViewModel>(this.Packets.Where(x => this.Filter.Pass(x)));
-                }
+                var bitmap = System.Drawing.Icon.ExtractAssociatedIcon(Model.Process.MainModule.FileName).ToBitmap();
+                var hBitmap = bitmap.GetHbitmap();
+                var wpfBitmap = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+                if (!DeleteObject(hBitmap))
+                    throw new Exception();
+
+                Icon = wpfBitmap;
+            }
+            catch
+            {
+                Icon = null;
+            }
+        }
+
+        private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Filtered)));
+        }
+
+        private void Clear(object obj)
+        {
+            Packets.Clear();
+        }
+
+        private void OnRun(object obj)
+        {
+            Model.Packets.Enabled = !Model.Packets.Enabled;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RunIcon)));
+        }
+
+        private void Packets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+                    Model.Packets.AddRange(e.NewItems.Select(x => (x as ViewModel.Packet).Model));
+                    break;
+
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+                    foreach (var deleted in e.OldItems.Select(x => (x as ViewModel.Packet).Model))
+                        Model.Packets.Remove(deleted);
+                    break;
             }
 
-            public int Id { get => this.Data.Id; }
-            public string Name { get => this.Data.Name; }
-            public BitmapSource Icon { get; private set; }
-            public Filter.ViewModel Filter { get; set; }
-
-            public ICommand RunCommand { get; private set; }
-            public ICommand ClearCommand { get; private set; }
-
-            public string RunIcon
-            {
-                get => this.Data.Packets.Enabled ? "/Image/play.png" : "/Image/pause.png";
-            }
-
-            public ViewModel(Channel channel)
-            {
-                this.Data = channel;
-                this.Filter = new Filter.ViewModel(this.Data.Filter);
-                this.Packets.CollectionChanged += this.Packets_CollectionChanged;
-                this.RunCommand = new RelayCommand(this.OnRun);
-                this.ClearCommand = new RelayCommand(this.Clear);
-
-                try
-                {
-                    var bitmap = System.Drawing.Icon.ExtractAssociatedIcon(this.Data._process.MainModule.FileName).ToBitmap();
-                    IntPtr hBitmap = bitmap.GetHbitmap();
-
-                    var wpfBitmap = Imaging.CreateBitmapSourceFromHBitmap(
-                        hBitmap,
-                        IntPtr.Zero,
-                        Int32Rect.Empty,
-                        BitmapSizeOptions.FromEmptyOptions());
-
-                    if (!DeleteObject(hBitmap))
-                        throw new Exception();
-
-                    this.Icon = wpfBitmap;
-                }
-                catch
-                {
-                    this.Icon = null;
-                }
-            }
-
-            private void Clear(object obj)
-            {
-                this.Packets.Clear();
-            }
-
-            private void OnRun(object obj)
-            {
-                this.Data.Packets.Enabled = !this.Data.Packets.Enabled;
-                this.OnPropertyChanged(nameof(this.RunIcon));
-            }
-
-            private void Packets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-            {
-                switch (e.Action)
-                {
-                    case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
-                        this.Data.Packets.AddRange(e.NewItems.Select(x => (x as Packet.ViewModel).Data));
-                        break;
-
-                    case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
-                        foreach (var deleted in e.OldItems.Select(x => (x as Packet.ViewModel).Data))
-                            this.Data.Packets.Remove(deleted);
-                        break;
-                }
-
-                this.OnPropertyChanged(nameof(this.Filtered));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Filtered)));
         }
     }
 }

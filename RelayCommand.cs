@@ -23,7 +23,7 @@ namespace KPCapture.Command
         #region Constructor
         public RelayCommand(Action<T> action)
         {
-            this._action = action;
+            _action = action;
         }
         #endregion
 
@@ -41,7 +41,7 @@ namespace KPCapture.Command
 
         public void Execute(object parameter)
         {
-            this._action((T)parameter);
+            _action((T)parameter);
         }
         #endregion
     }

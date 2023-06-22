@@ -1,40 +1,39 @@
-﻿using KPCapture.ViewModel;
-using System;
+﻿using System;
+using System.ComponentModel;
 
-namespace KPCapture.Model.Protocol
+namespace KPCapture.ViewModel
 {
-    public partial class Packet
+    public class Packet : INotifyPropertyChanged
     {
-        public class ViewModel : BaseViewModel
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private byte[] _decryptedBytesCache;
+        public byte[] DecryptedBytes
         {
-            private byte[] _decryptedBytesCache;
-            public byte[] DecryptedBytes
+            get
             {
-                get 
-                {
-                    if (this._decryptedBytesCache == null)
-                        this._decryptedBytesCache = this.Owner.Filter.Decrypt(this);
+                if (_decryptedBytesCache == null)
+                    _decryptedBytesCache = Owner.Filter.Decrypt(Model);
 
-                    return this._decryptedBytesCache;
-                }
+                return _decryptedBytesCache;
             }
+        }
 
-            public Packet Data { get; private set; }
-            public Channel.ViewModel Owner { get; private set; }
-            public uint Index { get; private set; }
-            public string Source { get => $"{this.Data.SourceAddress}:{this.Data.SourcePort}"; }
-            public string Destination { get => $"{this.Data.DestinationAddress}:{this.Data.DestinationPort}"; }
-            public string HexBytes { get => BitConverter.ToString(this.Data.Bytes).Replace('-', ' '); }
-            public byte[] Bytes { get => this.Data.Bytes; }
-            public string TimeStamp { get => this.Data.DateTime.ToString("yyyy/MM/dd HH:mm:ss"); }
-            public string Protocol { get => this.Data.Protocol.ToString(); }
+        public Model.Packet Model { get; private set; }
+        public Model.Channel Owner { get; private set; }
+        public uint Index { get; private set; }
+        public string Source { get => $"{Model.SourceAddress}:{Model.SourcePort}"; }
+        public string Destination { get => $"{Model.DestinationAddress}:{Model.DestinationPort}"; }
+        public string HexBytes { get => BitConverter.ToString(Model.Bytes).Replace('-', ' '); }
+        public byte[] Bytes { get => Model.Bytes; }
+        public string TimeStamp { get => Model.DateTime.ToString("yyyy/MM/dd HH:mm:ss"); }
+        public string Protocol { get => Model.ProtocolType.ToString(); }
 
-            public ViewModel(Channel.ViewModel owner, Packet packet)
-            {
-                this.Owner = owner;
-                this.Index = (uint)this.Owner.Packets.Count + 1;
-                this.Data = packet;
-            }
+        public Packet(Model.Channel model, Model.Packet packet)
+        {
+            Owner = model;
+            Index = (uint)Owner.Packets.Count + 1;
+            Model = packet;
         }
     }
 }

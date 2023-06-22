@@ -1,256 +1,248 @@
 ﻿using KPCapture.Command;
 using KPCapture.Dialog;
 using KPCapture.Model;
-using KPCapture.Model.Protocol;
 using KPCapture.Module;
-using KPCapture.ViewModel;
 using Microsoft.Scripting.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Windows;
 using System.Windows.Input;
 
-namespace KPCapture
+namespace KPCapture.ViewModel
 {
-    public partial class MainWindow
+    public class MainWindow : INotifyPropertyChanged
     {
-        public class ViewModel : BaseViewModel, Watcher.IListener
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private KPCapture.MainWindow _owner; // TODO: Model.MainWindow
+        private Watcher _watcher = new Watcher();
+        private KPCapture.Dialog.ChannelViewDialog _channelViewDialog;
+        private EditFilterDialog _filterDialog;
+
+        public ObservableCollection<ViewModel.Channel> Channels { get; private set; } = new ObservableCollection<ViewModel.Channel>();
+        public ObservableCollection<ViewModel.Channel> FilteredChannels
         {
-            private MainWindow _owner;
-            private Watcher _watcher;
-            private ChannelViewDialog _channelViewDialog;
-            private FilterDialog _filterDialog;
-
-            public ObservableCollection<Channel.ViewModel> Channels { get; private set; } = new ObservableCollection<Channel.ViewModel>();
-            public ObservableCollection<Channel.ViewModel> FilteredChannels
+            get
             {
-                get
+                return new ObservableCollection<ViewModel.Channel>(Channels.Where(x =>
                 {
-                    return new ObservableCollection<Channel.ViewModel>(this.Channels.Where(x =>
-                    {
-                        if (string.IsNullOrEmpty(this.ChannelFilterText))
-                            return true;
+                    if (string.IsNullOrEmpty(ChannelFilterText))
+                        return true;
 
-                        return $"{x.Id}".IndexOf(this.ChannelFilterText, StringComparison.OrdinalIgnoreCase) >= 0 || x.Name.IndexOf(this.ChannelFilterText, StringComparison.OrdinalIgnoreCase) >= 0;
-                    }));
-                }
-            }
-            public Channel.ViewModel SelectedChannel { get; private set; }
-            public bool IsSelected { get => this.SelectedChannel != null; }
-            public bool IsChannelEmpty { get => this.Channels.Count == 0; }
-            public string ChannelFilterText { get; set; }
-
-            public List<string> HostEntries 
-            {
-                get 
-                {
-                    return Dns.GetHostEntry(Dns.GetHostName())
-                        .AddressList.Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        .Select(x => x.ToString())
-                        .ToList();
-                } 
-            }
-
-            public bool Running { get => this._watcher.Running; }
-            public string StateText { get => this._watcher.Running ? "중단" : "캡처"; }
-
-            public ICommand AddChannelCommand { get; private set; }
-            public ICommand CaptureCommand { get; private set; }
-            public ICommand ChannelRemoved { get; private set; }
-            public ICommand ChannelDetail { get; private set; }
-            public ICommand ChannelFilter { get; private set; }
-            public ICommand SetMinimizeCommand { get; private set; }
-            public ICommand SetMaximizeCommand { get; private set; }
-            public ICommand CloseCommand { get; private set; }
-            public ICommand FilterCommand { get; private set; }
-
-            public ViewModel(MainWindow Owner)
-            {
-                this._owner = Owner;
-                this._watcher = new Watcher(this);
-                this.Channels.CollectionChanged += this.Channels_CollectionChanged;
-
-                this.AddChannelCommand = new RelayCommand(this.OnAddChannel);
-                this.CaptureCommand = new RelayCommand(this.OnCapture);
-                this.ChannelRemoved = new RelayCommand(this.OnChannelRemoved);
-                this.ChannelDetail = new RelayCommand(this.OnChannelDetail);
-                this.ChannelFilter = new RelayCommand(this.OnChannelFilter);
-                this.SetMinimizeCommand = new RelayCommand(this.OnSetMinimize);
-                this.SetMaximizeCommand = new RelayCommand(this.OnSetMaximize);
-                this.CloseCommand = new RelayCommand(this.OnClose);
-                this.FilterCommand = new RelayCommand(this.OnFilter);
-            }
-
-            private void Channels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-            {
-                this.OnPropertyChanged(nameof(this.FilteredChannels));
-                this.OnPropertyChanged(nameof(this.IsChannelEmpty));
-            }
-
-            private void OnChannelFilter(object obj)
-            {
-                this.SelectedChannel = obj as Channel.ViewModel;
-                this.OnFilter(obj);
-            }
-
-            private void OnFilter(object obj)
-            {
-                if (this.IsSelected == false)
-                    return;
-
-                if (this._filterDialog == null)
-                {
-                    this.SelectedChannel.Filter.PropertyChanged += this.Filter_PropertyChanged;
-                    this._filterDialog = new FilterDialog(this.SelectedChannel)
-                    {
-                        Owner = this._owner,
-                    };
-                    this._filterDialog.Cancel += this._filterDialog_Cancel;
-                    this._filterDialog.Closed += this._filterDialog_Closed;
-                    this._filterDialog.ScriptChanged += this._filterDialog_ScriptChanged;
-                    this._filterDialog.Show();
-                }
-                else if (this._filterDialog.Channel != this.SelectedChannel)
-                {
-                    this._filterDialog.Channel = this.SelectedChannel;
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            private void _filterDialog_ScriptChanged(object sender, string e)
-            {
-                if (this.SelectedChannel == null)
-                    return;
-
-                this.SelectedChannel.Filter.Script = e;
-            }
-
-            private void Filter_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-            {
-                this.SelectedChannel?.OnPropertyChanged(nameof(this.SelectedChannel.Filtered));
-            }
-
-            private void _filterDialog_Cancel(object sender, EventArgs e)
-            {
-                this.SelectedChannel.Filter.PropertyChanged -= this.Filter_PropertyChanged;
-                this.SelectedChannel.Filter = new Filter.ViewModel(this._filterDialog.Before);
-            }
-
-            private void _filterDialog_Closed(object sender, EventArgs e)
-            {
-                this._filterDialog = null;
-            }
-
-            private void OnChannelDetail(object obj)
-            {
-                var vm = obj as Channel.ViewModel;
-                this.SelectedChannel = vm;
-
-                this._owner.MainTab.SelectedIndex = 1;
-            }
-
-            private void OnChannelRemoved(object obj)
-            {
-                var vm = obj as Channel.ViewModel;
-                this.Channels.Remove(vm);
-
-                if (this.SelectedChannel == vm)
-                    this.SelectedChannel = null;
-            }
-
-            private void OnCapture(object obj)
-            {
-                if (this._watcher.Running)
-                    this._watcher.Stop();
-                else
-                    this._watcher.Start(this._owner.HostEntryBox.SelectedItem as string);
-
-                this.OnPropertyChanged(nameof(this.StateText));
-                this.OnPropertyChanged(nameof(this.Running));
-            }
-
-            private void OnAddChannel(object obj)
-            {
-                if (this._channelViewDialog != null)
-                    return;
-
-                this._channelViewDialog = new ChannelViewDialog(this.Channels.Select(x => x.Data))
-                {
-                    Owner = this._owner,
-                };
-                this._channelViewDialog.Closed += this._channelViewDialog_Closed;
-                this._channelViewDialog.Complete += this._channelViewDialog_Complete;
-                this._channelViewDialog.Show();
-            }
-
-            private void _channelViewDialog_Complete(object sender, EventArgs e)
-            {
-                foreach (var vm in this._channelViewDialog.Selected)
-                    this.Channels.Add(vm);
-            }
-
-            private void _channelViewDialog_Closed(object sender, EventArgs e)
-            {
-                this._channelViewDialog = null;
-            }
-
-            public void OnError(string message)
-            {
-                Console.WriteLine(message);
-            }
-
-            public void OnReceive(Packet packet)
-            {
-                IEnumerable<Channel.ViewModel> channels;
-
-                switch (packet.Protocol)
-                {
-                    case Model.Protocol.Header.Protocol.TCP:
-                        {
-                            channels = TCPTable.FindProcessId(packet)
-                                .Select(x => this.Channels.FirstOrDefault(c => c.Data.Id == x))
-                                .Where(x => x != null);
-                        }
-                        break;
-
-                    case Model.Protocol.Header.Protocol.UDP:
-                        {
-                            channels = UDPTable.FindProcessId(packet)
-                                .Select(x => this.Channels.FirstOrDefault(c => c.Data.Id == x))
-                                .Where(x => x != null);
-                        }
-                        break;
-
-                    default:
-                        return;
-                }
-
-                this._owner.Dispatcher.BeginInvoke(new Action(() => 
-                {
-                    foreach (var channel in channels)
-                        channel.Packets.Add(new Packet.ViewModel(channel, packet));
+                    return $"{x.Id}".IndexOf(ChannelFilterText, StringComparison.OrdinalIgnoreCase) >= 0 || x.Name.IndexOf(ChannelFilterText, StringComparison.OrdinalIgnoreCase) >= 0;
                 }));
             }
+        }
+        public ViewModel.Channel SelectedChannel { get; private set; }
+        public bool IsSelected => SelectedChannel != null;
+        public Visibility SelectedVisibility => IsSelected ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility NotSelectedVisibility => IsSelected ? Visibility.Collapsed : Visibility.Visible;
+        public bool IsChannelEmpty => Channels.Count == 0;
+        public Visibility EmptyScreenVisiblity => IsChannelEmpty ? Visibility.Visible : Visibility.Collapsed;
+        public string ChannelFilterText { get; set; }
 
-            public void OnSetMinimize(object parameter)
+        public List<string> HostEntries
+        {
+            get
             {
-                this._owner.WindowState = System.Windows.WindowState.Minimized;
+                return Dns.GetHostEntry(Dns.GetHostName())
+                    .AddressList.Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    .Select(x => x.ToString())
+                    .ToList();
+            }
+        }
+
+        public bool Running => _watcher.Running;
+        public bool Disabled => !Running;
+        public string StateText => _watcher.Running ? "중단" : "캡처";
+
+        public ICommand AddChannelCommand { get; private set; }
+        public ICommand CaptureCommand { get; private set; }
+        public ICommand ChannelRemoved { get; private set; }
+        public ICommand ChannelDetail { get; private set; }
+        public ICommand ChannelFilter { get; private set; }
+        public ICommand SetMinimizeCommand { get; private set; }
+        public ICommand SetMaximizeCommand { get; private set; }
+        public ICommand CloseCommand { get; private set; }
+        public ICommand FilterCommand { get; private set; }
+
+        public MainWindow(KPCapture.MainWindow owner)
+        {
+            _owner = owner;
+            _watcher.Received += OnReceive;
+            _watcher.Error += OnError;
+            Channels.CollectionChanged += Channels_CollectionChanged;
+
+            AddChannelCommand = new RelayCommand(OnAddChannel);
+            CaptureCommand = new RelayCommand(OnCapture);
+            ChannelRemoved = new RelayCommand(OnChannelRemoved);
+            ChannelDetail = new RelayCommand(OnChannelDetail);
+            ChannelFilter = new RelayCommand(OnChannelFilter);
+            SetMinimizeCommand = new RelayCommand(OnSetMinimize);
+            SetMaximizeCommand = new RelayCommand(OnSetMaximize);
+            CloseCommand = new RelayCommand(OnClose);
+            FilterCommand = new RelayCommand(OnFilterButtonClicked);
+        }
+
+        private void Channels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilteredChannels)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChannelEmpty)));
+        }
+
+        private void OnChannelFilter(object obj)
+        {
+            SelectedChannel = obj as ViewModel.Channel;
+            OnFilterButtonClicked(obj);
+        }
+
+        private void OnFilterButtonClicked(object obj)
+        {
+            if (IsSelected == false)
+                return;
+
+            if (_filterDialog == null)
+            {
+                _filterDialog = new EditFilterDialog(SelectedChannel)
+                {
+                    Owner = _owner,
+                };
+                _filterDialog.Cancel += (sender, e) => 
+                {
+                    SelectedChannel.Filter = _filterDialog.Origin;
+                };
+                _filterDialog.Closed += (sender, e) => 
+                {
+                    _filterDialog = null;
+                };
+                _filterDialog.Show();
+            }
+            else if (_filterDialog.Channel != SelectedChannel)
+            {
+                _filterDialog.Channel = SelectedChannel;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void OnChannelDetail(object obj)
+        {
+            var vm = obj as ViewModel.Channel;
+            SelectedChannel = vm;
+
+            _owner.MainTab.SelectedIndex = 1;
+        }
+
+        private void OnChannelRemoved(object obj)
+        {
+            var vm = obj as ViewModel.Channel;
+            Channels.Remove(vm);
+
+            if (SelectedChannel == vm)
+                SelectedChannel = null;
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChannelEmpty)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EmptyScreenVisiblity)));
+        }
+
+        private void OnCapture(object obj)
+        {
+            if (_watcher.Running)
+                _watcher.Stop();
+            else
+                _watcher.Start(_owner.HostEntryBox.SelectedItem as string);
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StateText)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Running)));
+        }
+
+        private void OnAddChannel(object obj)
+        {
+            if (_channelViewDialog != null)
+                return;
+
+            _channelViewDialog = new KPCapture.Dialog.ChannelViewDialog(Channels)
+            {
+                Owner = _owner,
+            };
+            _channelViewDialog.Closed += _channelViewDialog_Closed;
+            _channelViewDialog.Complete += _channelViewDialog_Complete;
+            _channelViewDialog.Show();
+        }
+
+        private void _channelViewDialog_Complete(object sender, EventArgs e)
+        {
+            foreach (var vm in _channelViewDialog.Selected)
+            {
+                Channels.Add(vm);
             }
 
-            public void OnSetMaximize(object parameter)
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsChannelEmpty)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EmptyScreenVisiblity)));
+        }
+
+        private void _channelViewDialog_Closed(object sender, EventArgs e)
+        {
+            _channelViewDialog = null;
+        }
+
+        public void OnError(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        public void OnReceive(Model.Packet packet)
+        {
+            IEnumerable<ViewModel.Channel> channels;
+
+            switch (packet.ProtocolType)
             {
-                this._owner.WindowState ^= System.Windows.WindowState.Maximized;
+                case ProtocolType.TCP:
+                    {
+                        channels = TCPTable.FindProcessId(packet)
+                            .Select(x => Channels.FirstOrDefault(c => c.Model.Id == x))
+                            .Where(x => x != null);
+                    }
+                    break;
+
+                case ProtocolType.UDP:
+                    {
+                        channels = UDPTable.FindProcessId(packet)
+                            .Select(x => Channels.FirstOrDefault(c => c.Model.Id == x))
+                            .Where(x => x != null);
+                    }
+                    break;
+
+                default:
+                    return;
             }
 
-            public void OnClose(object parameter)
+            _owner.Dispatcher.BeginInvoke(new Action(() =>
             {
-                this._owner.Close();
-            }
+                foreach (var channel in channels)
+                    channel.Packets.Add(new ViewModel.Packet(channel.Model, packet));
+            }));
+        }
+
+        public void OnSetMinimize(object parameter)
+        {
+            _owner.WindowState = System.Windows.WindowState.Minimized;
+        }
+
+        public void OnSetMaximize(object parameter)
+        {
+            _owner.WindowState ^= System.Windows.WindowState.Maximized;
+        }
+
+        public void OnClose(object parameter)
+        {
+            _owner.Close();
         }
     }
 }

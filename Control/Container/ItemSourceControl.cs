@@ -26,7 +26,7 @@ namespace KPCapture.Control.Container
 
         public ItemsSourceControl()
         {
-            this.DataContextChanged += this.ItemsSourceControl_DataContextChanged;
+            DataContextChanged += ItemsSourceControl_DataContextChanged;
         }
 
         private void ItemsSourceControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -35,7 +35,7 @@ namespace KPCapture.Control.Container
 
         public void OnPropertyChanged(string name)
         {
-            this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(name));
+            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         private static void OnItemsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -55,26 +55,26 @@ namespace KPCapture.Control.Container
             if (null != oldValueINotifyCollectionChanged)
             {
                 oldValueINotifyCollectionChanged.CollectionChanged -= new NotifyCollectionChangedEventHandler(NewValueINotifyCollectionChanged_CollectionChanged);
-                this.NewValueINotifyCollectionChanged_CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new List<object>(OldItems as IEnumerable<object>)));
+                NewValueINotifyCollectionChanged_CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new List<object>(OldItems as IEnumerable<object>)));
             }
             // Add handler for newValue.CollectionChanged (if possible)
             var newValueINotifyCollectionChanged = NewItems as INotifyCollectionChanged;
             if (null != newValueINotifyCollectionChanged)
             {
                 newValueINotifyCollectionChanged.CollectionChanged += new NotifyCollectionChangedEventHandler(NewValueINotifyCollectionChanged_CollectionChanged);
-                this.NewValueINotifyCollectionChanged_CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<object>(NewItems as IEnumerable<object>)));
+                NewValueINotifyCollectionChanged_CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<object>(NewItems as IEnumerable<object>)));
             }
         }
 
         public abstract Panel GetContainer();
 
-        public virtual Panel GetRemoveContainer(object context) { return this.GetContainer(); }
+        public virtual Panel GetRemoveContainer(object context) { return GetContainer(); }
 
         public abstract FrameworkElement OnCreate(object context);
 
         public virtual void OnFinedDestroyedItem(FrameworkElement control, object context)
         {
-            this.GetRemoveContainer(context).Children.Remove(control);
+            GetRemoveContainer(context).Children.Remove(control);
         }
 
         public virtual void OnFindingdDestroyedItem(object context) { }
@@ -83,9 +83,9 @@ namespace KPCapture.Control.Container
 
         public void NewValueINotifyCollectionChanged_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                this.ContainerLock.WaitOne();
+                ContainerLock.WaitOne();
 
                 switch (e.Action)
                 {
@@ -93,7 +93,7 @@ namespace KPCapture.Control.Container
                         {
                             for (var i = 0; i < e.NewItems.Count; i++)
                             {
-                                var container = this.GetRemoveContainer(e.OldItems[i]);
+                                var container = GetRemoveContainer(e.OldItems[i]);
                                 var control = container.Children.OfType<FrameworkElement>().First(x => x.DataContext == e.OldItems[i]);
                                 var index = container.Children.IndexOf(control);
                                 control.DataContext = e.NewItems[i];
@@ -103,18 +103,18 @@ namespace KPCapture.Control.Container
 
                     case NotifyCollectionChangedAction.Add:
                         {
-                            this.ContainerLock.WaitOne();
+                            ContainerLock.WaitOne();
                             foreach (var context in e.NewItems)
                             {
-                                var created = this.OnCreate(context);
+                                var created = OnCreate(context);
                                 if (created != null)
                                 {
                                     created.DataContext = context;
-                                    this.GetContainer().Children.Add(created);
+                                    GetContainer().Children.Add(created);
                                 }
                             }
                         }
-                        this.OnFinish();
+                        OnFinish();
                         break;
 
                     case NotifyCollectionChangedAction.Remove:
@@ -122,19 +122,19 @@ namespace KPCapture.Control.Container
                             var removed = new List<FrameworkElement>();
                             foreach (var context in e.OldItems)
                             {
-                                this.OnFindingdDestroyedItem(context);
+                                OnFindingdDestroyedItem(context);
 
-                                var container = this.GetRemoveContainer(context);
+                                var container = GetRemoveContainer(context);
                                 var control = container.Children.OfType<FrameworkElement>().First(x => x.DataContext == context);
                                 removed.Add(control);
                             }
 
                             foreach (var x in removed)
-                                this.OnFinedDestroyedItem(x, x.DataContext);
+                                OnFinedDestroyedItem(x, x.DataContext);
 
                             removed.Clear();
                         }
-                        this.OnFinish();
+                        OnFinish();
                         break;
 
                     default:
@@ -142,7 +142,7 @@ namespace KPCapture.Control.Container
                         break;
                 }
 
-                this.ContainerLock.ReleaseMutex();
+                ContainerLock.ReleaseMutex();
             }));
         }
     }

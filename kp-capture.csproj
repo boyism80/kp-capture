@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <RootNamespace>KPCapture</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Image\close.png" />
+    <None Remove="Image\filter.png" />
+    <None Remove="Image\icon_caption.png" />
+    <None Remove="Image\icon_header.png" />
+    <None Remove="Image\maximize.png" />
+    <None Remove="Image\minimize.png" />
+    <None Remove="Image\normalize.png" />
+    <None Remove="Image\pause.png" />
+    <None Remove="Image\play.png" />
+    <None Remove="Image\recycle bin.png" />
+    <None Remove="Image\remove.png" />
+    <None Remove="Image\search.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Be.Windows.Forms.HexBox.Net5" Version="1.8.0" />
+    <PackageReference Include="Expression.Interaction" Version="3.0.40218" />
+    <PackageReference Include="IronPython" Version="3.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Image\close.png" />
+    <Resource Include="Image\filter.png" />
+    <Resource Include="Image\icon_caption.png" />
+    <Resource Include="Image\icon_header.png" />
+    <Resource Include="Image\maximize.png" />
+    <Resource Include="Image\minimize.png" />
+    <Resource Include="Image\normalize.png" />
+    <Resource Include="Image\pause.png" />
+    <Resource Include="Image\play.png" />
+    <Resource Include="Image\recycle bin.png" />
+    <Resource Include="Image\remove.png" />
+    <Resource Include="Image\search.png" />
+  </ItemGroup>
+
+</Project>

@@ -39,7 +39,7 @@ namespace KPCapture.Control.Container
 
         public override Panel GetContainer()
         {
-            return this.Container;
+            return Container;
         }
 
         public override FrameworkElement OnCreate(object context)
@@ -47,25 +47,25 @@ namespace KPCapture.Control.Container
             return new ChannelControl
             {
                 DataContext = context,
-                Remove = this.OnRemove,
-                Detail = this.OnDetail,
-                Filter = this.OnFilter
+                Remove = OnRemove,
+                Detail = OnDetail,
+                Filter = OnFilter
             };
         }
 
-        private void OnFilter(Channel.ViewModel obj)
+        private void OnFilter(ViewModel.Channel obj)
         {
-            this.Filter?.Execute(obj);
+            Filter?.Execute(obj);
         }
 
-        private void OnDetail(Channel.ViewModel obj)
+        private void OnDetail(ViewModel.Channel obj)
         {
-            this.Detail?.Execute(obj);
+            Detail?.Execute(obj);
         }
 
-        private void OnRemove(Channel.ViewModel obj)
+        private void OnRemove(ViewModel.Channel obj)
         {
-            this.Remove?.Execute(obj);
+            Remove?.Execute(obj);
         }
     }
 }

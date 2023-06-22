@@ -1,9 +1,6 @@
-﻿using KPCapture.Model;
-using KPCapture.Model.Protocol;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,41 +9,48 @@ namespace KPCapture.Dialog
     /// <summary>
     /// Interaction logic for FilterDialog.xaml
     /// </summary>
-    public partial class FilterDialog : Window
+    public partial class EditFilterDialog : Window
     {
-        private Channel.ViewModel _channel;
-        public Channel.ViewModel Channel
+        private Model.Filter _origin;
+        public ViewModel.Filter Origin => new ViewModel.Filter(_origin);
+
+        private ViewModel.Channel _channel;
+        public ViewModel.Channel Channel
         {
-            get => this._channel;
+            get => _channel;
             set 
             {
-                this._channel = value;
-                this.Before = new Filter.ViewModel(this._channel.Filter);
+                if (_channel != null)
+                {
+                    _channel.Filter = new ViewModel.Filter(_origin);
+                }
+
+                _channel = value;
+                _origin = _channel.Filter.Model.Clone();
             }
         }
-        public Filter.ViewModel Before { get; private set; }
 
         public event EventHandler Complete;
         public event EventHandler Cancel;
         public event EventHandler<string> ScriptChanged;
 
-        public FilterDialog(Channel.ViewModel vm)
+        public EditFilterDialog(ViewModel.Channel vm)
         {
-            this.Channel = vm;
-            this.DataContext = this.Channel.Filter;
+            Channel = vm;
+            DataContext = Channel.Filter;
             InitializeComponent();
         }
 
         private void OnComplete(object sender, RoutedEventArgs e)
         {
-            this.Complete?.Invoke(this, EventArgs.Empty);
-            this.Close();
+            Complete?.Invoke(this, EventArgs.Empty);
+            Close();
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
         {
-            this.Cancel?.Invoke(this, EventArgs.Empty);
-            this.Close();
+            Cancel?.Invoke(this, EventArgs.Empty);
+            Close();
         }
 
         private void OnFindScript(object sender, RoutedEventArgs e)
@@ -59,26 +63,26 @@ namespace KPCapture.Dialog
                 Filter = "Python script file (*.py)|*.py"
             };
 
-            if (dialog.ShowDialog(this.Owner) == true)
+            if (dialog.ShowDialog(Owner) == true)
             {
-                this.Contents.Text = File.ReadAllText(dialog.FileName);
-                this.ScriptChanged?.Invoke(this, dialog.FileName);
+                Contents.Text = File.ReadAllText(dialog.FileName);
+                ScriptChanged?.Invoke(this, dialog.FileName);
             }
         }
 
         private void OnScriptChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            if (this.Contents == null)
+            if (Contents == null)
                 return;
 
             try
             {
                 var path = (sender as TextBox).Text;
-                this.Contents.Text = File.ReadAllText(path);
+                Contents.Text = File.ReadAllText(path);
             }
             catch
             {
-                this.Contents.Text = string.Empty;
+                Contents.Text = string.Empty;
             }
         }
     }

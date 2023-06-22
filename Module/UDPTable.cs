@@ -1,5 +1,4 @@
-﻿using KPCapture.Model.Protocol;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -101,7 +100,7 @@ namespace KPCapture.Module
             return GetUDPConnections<MIB_UDP6ROW_OWNER_PID, MIB_UDP6TABLE_OWNER_PID>(AF_INET6);
         }
 
-        public static IEnumerable<uint> FindProcessId(Packet packet)
+        public static IEnumerable<uint> FindProcessId(Model.Packet packet)
         {
             var list = new List<uint>();
             if (packet.IP.Version == "IP v4")

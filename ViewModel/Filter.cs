@@ -1,190 +1,187 @@
-﻿using KPCapture.ViewModel;
+﻿using KPCapture.Model;
 using Microsoft.Scripting.Utils;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace KPCapture.Model.Protocol
+namespace KPCapture.ViewModel
 {
-    public partial class Filter
+    public class Filter : INotifyPropertyChanged
     {
-        public class ViewModel : BaseViewModel
+        public event PropertyChangedEventHandler PropertyChanged;
+        private const string REGEX_IP_PATTERN = @"^(?<host>\d{1,3}(\.\d{1,3}){3})(|:(?<port>\d+))$";
+
+        public Model.Filter Model { get; private set; }
+
+        public IPAddress Source
         {
-            private const string REGEX_IP_PATTERN = @"^(?<host>\d{1,3}(\.\d{1,3}){3})(|:(?<port>\d+))$";
+            get => Model.Source;
+            set => Model.Source = value;
+        }
+        public int? SourcePort
+        {
+            get => Model.SourcePort;
+            set => Model.SourcePort = value;
+        }
 
-            private Filter _data;
-
-            public IPAddress Source
+        private string _sourceAddressText = string.Empty;
+        public string SourceAddressText
+        {
+            get => _sourceAddressText;
+            set
             {
-                get => this._data.Source;
-                set => this._data.Source = value;
-            }
-            public int? SourcePort
-            {
-                get => this._data.SourcePort;
-                set => this._data.SourcePort = value;
-            }
-
-            private string _sourceAddressText = string.Empty;
-            public string SourceAddressText
-            {
-                get => this._sourceAddressText;
-                set
+                try
                 {
-                    try
-                    {
-                        var match = Regex.Match(value, REGEX_IP_PATTERN);
-                        if (match.Success == false)
-                            throw new Exception("Invalid IP address format.");
+                    var match = Regex.Match(value, REGEX_IP_PATTERN);
+                    if (match.Success == false)
+                        throw new Exception("Invalid IP address format.");
 
-                        this.Source = IPAddress.Parse(match.Groups["host"].Value);
-                        if (string.IsNullOrEmpty(match.Groups["port"].Value))
-                            this.SourcePort = null;
-                        else
-                            this.SourcePort = int.Parse(match.Groups["port"].Value);
-                        this.SourceException = string.Empty;
-                    }
-                    catch(Exception e)
-                    {
-                        this.Source = null;
-                        this.SourcePort = null;
-                        this.SourceException = e.Message;
-                    }
-
-                    this._sourceAddressText = value;
-                }
-            }
-            public string SourceException { get; private set; }
-
-            private string _destAddressText = string.Empty;
-            public string DestAddressText
-            {
-                get => this._destAddressText;
-                set
-                {
-                    try
-                    {
-                        var match = Regex.Match(value, REGEX_IP_PATTERN);
-                        if (match.Success == false)
-                            throw new Exception("Invalid IP address format.");
-
-                        this.Dest = IPAddress.Parse(match.Groups["host"].Value);
-                        if (string.IsNullOrEmpty(match.Groups["port"].Value))
-                            this.DestPort = null;
-                        else
-                            this.DestPort = int.Parse(match.Groups["port"].Value);
-                        this.DestException = string.Empty;
-                    }
-                    catch (Exception e)
-                    {
-                        this.Dest = null;
-                        this.DestPort = null;
-                        this.DestException = e.Message;
-                    }
-
-                    this._destAddressText = value;
-                }
-            }
-            public string DestException { get; private set; }
-
-            public IPAddress Dest
-            {
-                get => this._data.Dest;
-                set => this._data.Dest = value;
-            }
-
-            public int? DestPort
-            {
-                get => this._data.DestPort;
-                set => this._data.DestPort = value;
-            }
-
-            public Header.Protocol? Protocol
-            {
-                get => this._data.Protocol;
-                set => this._data.Protocol = (value == Header.Protocol.NONE ? null : value);
-            }
-
-            private string _hexBytes = string.Empty;
-            public string HexBytes
-            {
-                get => this._hexBytes;
-                set
-                {
-                    try
-                    {
-                        this._hexBytes = value;
-                        if (string.IsNullOrEmpty(value))
-                        {
-                            this._data.Bytes = null;
-                        }
-                        else
-                        {
-                            this._data.Bytes = value.TrimEnd(' ').Split(' ')
-                                .Where(x => x.Length == 2)
-                                .Select(x => Convert.ToByte(x, 16))
-                                .ToArray();
-
-                            if (this._data.Bytes.Length == 0)
-                                throw new Exception();
-                        }
-                    }
-                    catch
-                    {
-                        this._data.Bytes = Encoding.UTF8.GetBytes(this._hexBytes);
-                    }
-
-                    if (this._data.Bytes != null)
-                        this.PreviewHexText = BitConverter.ToString(this._data.Bytes).Replace('-', ' ');
+                    Source = IPAddress.Parse(match.Groups["host"].Value);
+                    if (string.IsNullOrEmpty(match.Groups["port"].Value))
+                        SourcePort = null;
                     else
-                        this.PreviewHexText = string.Empty;
-                    this._hexBytes = value;
+                        SourcePort = int.Parse(match.Groups["port"].Value);
+                    SourceException = string.Empty;
                 }
-            }
-            public string PreviewHexText { get; private set; }
-
-            private string _script = string.Empty;
-            public string Script
-            {
-                get => this._script;
-                set
+                catch (Exception e)
                 {
-                    try
-                    {
-                        if (File.Exists(value) == false)
-                            throw new Exception($"Not found script file : {value}");
-
-                        this._data.Script = value;
-                    }
-                    catch
-                    {
-                        this._data.Script = string.Empty;
-                    }
-                    
-                    this._script = value;
+                    Source = null;
+                    SourcePort = null;
+                    SourceException = e.Message;
                 }
-            }
 
-            public ViewModel(Filter data)
+                _sourceAddressText = value;
+            }
+        }
+        public string SourceException { get; private set; }
+
+        private string _destAddressText = string.Empty;
+        public string DestAddressText
+        {
+            get => _destAddressText;
+            set
             {
-                this._data = data;
+                try
+                {
+                    var match = Regex.Match(value, REGEX_IP_PATTERN);
+                    if (match.Success == false)
+                        throw new Exception("Invalid IP address format.");
+
+                    Dest = IPAddress.Parse(match.Groups["host"].Value);
+                    if (string.IsNullOrEmpty(match.Groups["port"].Value))
+                        DestPort = null;
+                    else
+                        DestPort = int.Parse(match.Groups["port"].Value);
+                    DestException = string.Empty;
+                }
+                catch (Exception e)
+                {
+                    Dest = null;
+                    DestPort = null;
+                    DestException = e.Message;
+                }
+
+                _destAddressText = value;
             }
+        }
+        public string DestException { get; private set; }
 
-            public ViewModel(ViewModel vm) : this(new Filter(vm._data))
-            { }
+        public IPAddress Dest
+        {
+            get => Model.Dest;
+            set => Model.Dest = value;
+        }
 
-            public bool Pass(Packet.ViewModel vm)
+        public int? DestPort
+        {
+            get => Model.DestPort;
+            set => Model.DestPort = value;
+        }
+
+        public ProtocolType? ProtocolType
+        {
+            get => Model.ProtocolType;
+            set => Model.ProtocolType = (value == KPCapture.Model.ProtocolType.NONE ? null : value);
+        }
+
+        private string _hexBytes = string.Empty;
+        public string HexBytes
+        {
+            get => _hexBytes;
+            set
             {
-                return this._data.Pass(vm.Data);
-            }
+                try
+                {
+                    _hexBytes = value;
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        Model.Bytes = null;
+                    }
+                    else
+                    {
+                        Model.Bytes = value.TrimEnd(' ').Split(' ')
+                            .Where(x => x.Length == 2)
+                            .Select(x => Convert.ToByte(x, 16))
+                            .ToArray();
 
-            public byte[] Decrypt(Packet.ViewModel vm)
-            {
-                return this._data.Decrypt(vm.Data);
+                        if (Model.Bytes.Length == 0)
+                            throw new Exception();
+                    }
+                }
+                catch
+                {
+                    Model.Bytes = Encoding.UTF8.GetBytes(_hexBytes);
+                }
+
+                if (Model.Bytes != null)
+                    PreviewHexText = BitConverter.ToString(Model.Bytes).Replace('-', ' ');
+                else
+                    PreviewHexText = string.Empty;
+                _hexBytes = value;
             }
+        }
+        public string PreviewHexText { get; private set; }
+
+        private string _script = string.Empty;
+
+        public string Script
+        {
+            get => _script;
+            set
+            {
+                try
+                {
+                    if (File.Exists(value) == false)
+                        throw new Exception($"Not found script file : {value}");
+
+                    Model.Script = value;
+                }
+                catch
+                {
+                    Model.Script = string.Empty;
+                }
+
+                _script = value;
+            }
+        }
+
+        public Filter(Model.Filter model)
+        {
+            Model = model;
+        }
+
+        public bool Pass(ViewModel.Packet vm)
+        {
+            return Model.Pass(vm.Model);
+        }
+
+        public byte[] Decrypt(ViewModel.Packet vm)
+        {
+            return Model.Decrypt(vm.Model);
         }
     }
 }

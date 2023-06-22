@@ -1,9 +1,9 @@
 ﻿using Be.Windows.Forms;
-using KPCapture.Model.Protocol;
 using Microsoft.Scripting.Utils;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace KPCapture
@@ -13,33 +13,31 @@ namespace KPCapture
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Thread _detectExitChannelThread;
-
-        public ViewModel MainFormViewModel { get; private set; }
+        private bool _exitFlag = false;
+        public ViewModel.MainWindow MainFormViewModel { get; private set; }
 
         public MainWindow()
         {
-            this.MainFormViewModel = new ViewModel(this);
-            this.DataContext = this.MainFormViewModel;
+            MainFormViewModel = new ViewModel.MainWindow(this);
+            DataContext = MainFormViewModel;
             InitializeComponent();
 
-            this._detectExitChannelThread = new Thread(this.OnDetectExitChannel);
-            this._detectExitChannelThread.Start();
+            new Task(OnDetectExitChannel).Start();
         }
 
         private void OnDetectExitChannel()
         {
-            while (true)
+            while (!_exitFlag)
             {
                 try
                 {
                     var runnings = Process.GetProcesses().Select(x => x.Id);
-                    var exits = this.MainFormViewModel.Channels.Where(x => runnings.Contains(x.Id) == false).ToList();
+                    var exits = MainFormViewModel.Channels.Where(x => runnings.Contains(x.Id) == false).ToList();
 
-                    this.Dispatcher.Invoke(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         foreach (var exit in exits)
-                            this.MainFormViewModel.Channels.Remove(exit);
+                            MainFormViewModel.Channels.Remove(exit);
                     });
                 }
                 catch
@@ -53,20 +51,20 @@ namespace KPCapture
         {
             try
             {
-                var item = e.AddedItems.Select(x => x as Packet.ViewModel).First();
-                this.RawHexBox.ByteProvider = new DynamicByteProvider(item.Bytes);
-                this.DecHexBox.ByteProvider = new DynamicByteProvider(item.DecryptedBytes);
+                var item = e.AddedItems.Select(x => x as ViewModel.Packet).First();
+                RawHexBox.ByteProvider = new DynamicByteProvider(item.Bytes);
+                DecHexBox.ByteProvider = new DynamicByteProvider(item.DecryptedBytes);
             }
             catch
             {
-                this.RawHexBox.ByteProvider = null;
-                this.DecHexBox.ByteProvider = null;
+                RawHexBox.ByteProvider = null;
+                DecHexBox.ByteProvider = null;
             }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this._detectExitChannelThread.Abort();
+            _exitFlag = true;
         }
     }
 }

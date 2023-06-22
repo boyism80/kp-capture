@@ -1,10 +1,10 @@
-﻿<Window x:Class="KPCapture.Dialog.FilterDialog"
+﻿<Window x:Class="KPCapture.Dialog.EditFilterDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:header="clr-namespace:KPCapture.Model.Protocol.Header"
+        xmlns:header="clr-namespace:KPCapture.Model"
         xmlns:local="clr-namespace:KPCapture.Dialog"
         mc:Ignorable="d"
         Style="{StaticResource DefaultWindowStyle}"
@@ -14,7 +14,7 @@
                             MethodName="GetValues" 
                             ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="header:Protocol"></x:Type>
+                <x:Type TypeName="header:ProtocolType"></x:Type>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Window.Resources>
@@ -73,7 +73,7 @@
                         <StackPanel Style="{DynamicResource Wrap}">
                             <TextBlock Style="{DynamicResource Header}"
                                        Text="Protocol"/>
-                            <ComboBox SelectedItem="{Binding Protocol, Mode=TwoWay}"
+                            <ComboBox SelectedItem="{Binding ProtocolType, Mode=TwoWay}"
                                       ItemsSource="{Binding Source={StaticResource ProtocolCollection}}"/>
                         </StackPanel>
                     </StackPanel>

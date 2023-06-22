@@ -53,8 +53,8 @@ namespace KPCapture.Control
 
         public event RoutedEventHandler Click
         {
-            add { this.button.AddHandler(ButtonBase.ClickEvent, value); }
-            remove { this.button.RemoveHandler(ButtonBase.ClickEvent, value); }
+            add { button.AddHandler(ButtonBase.ClickEvent, value); }
+            remove { button.RemoveHandler(ButtonBase.ClickEvent, value); }
         }
     }
 }
